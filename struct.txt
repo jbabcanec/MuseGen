@@ -1,0 +1,40 @@
++-- struct.txt
++-- data
+|   +-- midi_to_human_readable.py
+|   +-- midi_to_preprocess.py
+|   +-- processed
+|   |   +-- drift.txt
+|   |   +-- drifti_sequences.npz
+|   |   +-- radium.txt
+|   |   +-- radiumi_sequences.npz
+|   |   +-- stained_glass.txt
+|   |   +-- stained_glassi_sequences.npz
+|   |   +-- zeg2.txt
+|   |   +-- zeg2i_sequences.npz
+|   +-- raw
+|   |   +-- drift.midi
+|   |   +-- radium.midi
+|   |   +-- stained_glass.midi
+|   |   +-- zeg2.midi
++-- notebooks
++-- outputs
+|   +-- generated_music
+|   |   +-- generated_ensemble_output.midi
+|   +-- models
+|   |   +-- model_drifti_sequences.h5
+|   |   +-- model_radiumi_sequences.h5
+|   |   +-- model_stained_glassi_sequences.h5
+|   |   +-- model_zeg2i_sequences.h5
++-- src
+|   +-- generation
+|   |   +-- example_output.midi
+|   |   +-- generate.py
+|   |   +-- generated_sequence.txt
+|   |   +-- midi_conversion.py
+|   |   +-- __pycache__
+|   +-- models
+|   |   +-- rnn_model.py
+|   |   +-- __pycache__
+|   +-- training
+|   |   +-- train_model.py
++-- struct.txt
