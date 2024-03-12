@@ -5,102 +5,15 @@ from pathlib import Path
 from tensorflow.keras.models import load_model
 from midi_conversion import sequence_to_midi
 
-def generate_random_seed(sequence_length=100, most_likely_first_pitch=60, pitch_range=128, time_increment=0.1):
-    current_time = 0  # Initialize the current time
-    seed_sequence = []
 
-    # Start with an initial event with the most likely pitch, full velocity, and initial time
-    seed_sequence.append([1, most_likely_first_pitch, 1.0, current_time])
+# import seeds
+from seeds.random_seed import generate_random_seed
+from seeds.load_seed import load_random_seed
 
-    # Generate subsequent events with incremented time values
-    for _ in range(1, sequence_length):
-        pitch = np.random.randint(0, pitch_range)  # Random pitch within the range
-        velocity = np.random.random()  # Random velocity between 0 and 1
-        current_time += time_increment  # Increment the current time
-
-        # Generate a new event with a note-on, random pitch, random velocity, and updated current time
-        event = [1, pitch, velocity, current_time]
-        seed_sequence.append(event)
-
-    return np.array(seed_sequence)
-
-# Function to load a random seed sequence from a .npz file in the sample_dir
-def load_random_seed(sample_dir, sequence_length=100):
-    npz_files = list(Path(sample_dir).glob('*.npz'))
-
-    if not npz_files:
-        raise ValueError("No .npz files found in the specified directory.")
-
-    random_npz = random.choice(npz_files)
-    print(f"Loading seed sequence from: {random_npz}")
-
-    with np.load(random_npz) as data:
-        # Assuming 'sequences' is a 3D array ([num_sequences, sequence_length, num_features])
-        # and you want to select one sequence (2D) from it
-        all_sequences = data['sequences']
-
-        # Select a single sequence randomly or use a specific selection criteria
-        selected_sequence_index = random.randint(0, all_sequences.shape[0] - 1)
-        seed_sequence = all_sequences[selected_sequence_index]
-
-        # Adjust the sequence to have the desired length
-        if seed_sequence.shape[0] > sequence_length:
-            # Truncate the sequence if it's longer than the desired length
-            seed_sequence = seed_sequence[:sequence_length, :]
-        elif seed_sequence.shape[0] < sequence_length:
-            # Pad the sequence with zeros if it's shorter than the desired length
-            padding = np.zeros((sequence_length - seed_sequence.shape[0], seed_sequence.shape[1]))
-            seed_sequence = np.vstack([seed_sequence, padding])
-
-    return seed_sequence
-
-
-def generate_music(models, seed_sequence, num_generate=100, temperature=1.0):
-    input_sequence = np.array(seed_sequence)
-    generated_sequence = []
-
-    for i in range(num_generate):
-        best_pitch, best_velocity, best_event_time, best_note_event = 0, 0, 0, 0
-        best_pitch_confidence, best_velocity_confidence, best_event_time_confidence, best_note_event_confidence = -np.inf, -np.inf, -np.inf, -np.inf
-
-        print(f"Generating event {i+1}/{num_generate}")
-
-        for model in models:
-            prediction = model.predict(np.expand_dims(input_sequence, axis=0))
-            note_event_pred, pitch_pred, velocity_pred, event_time_pred = prediction
-
-            note_event_confidence = np.max(note_event_pred)
-            pitch_confidence = np.max(pitch_pred)
-            velocity_confidence = np.max(velocity_pred)
-            event_time_confidence = np.max(event_time_pred)
-
-            if note_event_confidence > best_note_event_confidence:
-                best_note_event_confidence = note_event_confidence
-                best_note_event = np.argmax(note_event_pred, axis=-1)[0]
-
-            if pitch_confidence > best_pitch_confidence:
-                best_pitch_confidence = pitch_confidence
-                best_pitch = np.argmax(pitch_pred, axis=-1)[0]
-
-            if velocity_confidence > best_velocity_confidence:
-                best_velocity_confidence = velocity_confidence
-                best_velocity = velocity_pred[0][0] * 127
-
-            if event_time_confidence > best_event_time_confidence:
-                best_event_time_confidence = event_time_confidence
-                best_event_time = event_time_pred[0].dot(np.arange(event_time_pred.shape[1]))  # Expected value for event time
-
-            print(f"  Model: {model.name} - Note Event: {best_note_event} (Confidence: {best_note_event_confidence:.4f}), Pitch: {best_pitch} (Confidence: {best_pitch_confidence:.4f}), Velocity: {best_velocity:.2f} (Confidence: {best_velocity_confidence:.4f}), Event Time: {best_event_time} (Confidence: {best_event_time_confidence:.4f})")
-
-        next_event = [best_note_event, best_pitch, best_velocity, best_event_time]
-        generated_sequence.append(next_event)
-        input_sequence = np.vstack([input_sequence[1:], next_event])
-
-        print(f"Selected for event {i+1}: Note Event {best_note_event}, Pitch {best_pitch}, Velocity (scaled) {best_velocity:.2f}, Event Time {best_event_time}")
-        print("------")
-
-    return generated_sequence
-
+# import rules which should theoretically disolve
+from rules.avoid_accumulation import avoid_accumulation
+from rules.ensure_times_in_order import ensure_time_progression
+from rules.prevent_note_off_without_on import prevent_note_off_without_on
 
 
 # Directory setup
@@ -109,6 +22,62 @@ models_dir = project_root / 'outputs/models'
 generated_music_dir = project_root / 'outputs/generated_music'
 sample_dir = project_root / 'data/processed'
 generated_music_dir.mkdir(exist_ok=True)
+
+
+
+def softmax(x, temperature=1.0):
+    """Compute softmax values for each set of scores in x adjusted by temperature."""
+    e_x = np.exp((x - np.max(x)) / temperature)
+    return e_x / e_x.sum(axis=-1, keepdims=True)
+
+
+def generate_music(models, seed_sequence, num_generate=100, temperature=1.0, max_simultaneous_notes=8):
+    input_sequence = np.array(seed_sequence)
+    generated_sequence = []
+
+    last_event_time = 0 if len(seed_sequence) == 0 else seed_sequence[-1, -1]
+    unresolved_note_ons = set()
+
+    for i in range(num_generate):
+        print(f"Generating event {i+1}/{num_generate}")
+
+        for model in models:
+            prediction = model.predict(np.expand_dims(input_sequence, axis=0))
+            note_event_pred, pitch_pred, velocity_pred, event_time_pred = prediction
+
+            note_event_prob = softmax(note_event_pred[0], temperature=temperature)
+            pitch_prob = softmax(pitch_pred[0], temperature=temperature)
+
+            note_event = np.random.choice(range(len(note_event_prob)), p=note_event_prob)
+            pitch = np.random.choice(range(len(pitch_prob)), p=pitch_prob)
+
+            best_velocity = velocity_pred[0][0] * 127
+            best_event_time = event_time_pred[0].dot(np.arange(event_time_pred.shape[1]))
+
+            # Adjust event time to ensure progression
+            best_event_time = ensure_time_progression(last_event_time, best_event_time)
+
+            # Check note-on accumulation and possibly turn off a note
+            if note_event == 1 and len(unresolved_note_ons) >= max_simultaneous_notes:
+                note_to_turn_off = unresolved_note_ons.pop()  # Remove and get an unresolved note
+                generated_sequence.append([0, note_to_turn_off, 0, best_event_time])  # Add note-off event for it
+
+            if note_event == 1:
+                unresolved_note_ons.add(pitch)  # Add new note-on to unresolved
+            elif note_event == 0 and pitch in unresolved_note_ons:
+                unresolved_note_ons.remove(pitch)  # Remove resolved note-off
+
+            next_event = [note_event, pitch, best_velocity, best_event_time]
+            generated_sequence.append(next_event)
+            input_sequence = np.vstack([input_sequence[1:], next_event])
+
+            print(f"Selected for event {i+1}: Note Event {note_event}, Pitch {pitch}, Velocity (scaled) {best_velocity:.2f}, Event Time {best_event_time}")
+            print("------")
+
+    # Filter out invalid note-off events
+    final_sequence = prevent_note_off_without_on(np.array(generated_sequence))
+
+    return final_sequence
 
 
 
