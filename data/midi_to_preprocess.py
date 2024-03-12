@@ -43,16 +43,20 @@ def process_file(midi_file):
         return
 
     events = []
-    current_time = 0
 
     for track in mid.tracks:
+        current_time = 0  # Reset current time for each track
         for msg in track:
-            current_time += msg.time
+            current_time += msg.time  # Accumulate time
             if msg.type in ['note_on', 'note_off']:
-                event_type = 'OFF' if msg.type == 'note_off' or msg.velocity == 0 else 'ON'
-                events.append((event_type, msg.note, msg.velocity, current_time))
+                event_type = 1 if msg.type == 'note_on' and msg.velocity > 0 else 0  # Use 1 for 'ON', 0 for 'OFF'
+                events.append((current_time, event_type, msg.note, msg.velocity))  # Include event_type as a numerical value
 
-    encoded_events = [encode_event(*event[:-1], event[-1]) for event in events]
+    # Sort events first by time and then by event type ('OFF' before 'ON')
+    events.sort(key=lambda x: (x[0], x[1]))
+
+    # Convert event type back to 'ON'/'OFF' strings if necessary and encode events
+    encoded_events = [encode_event('ON' if etype == 1 else 'OFF', note, velocity, time) for time, etype, note, velocity in events]
     log_event_distribution(encoded_events)
 
     sequences, next_events = zip(*[(encoded_events[i:i+sequence_length], encoded_events[i+sequence_length]) for i in range(len(encoded_events) - sequence_length)])

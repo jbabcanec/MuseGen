@@ -12,13 +12,8 @@ def sequence_to_midi(sequence, output_file, ticks_per_beat=480, default_note_dur
     for i, event in enumerate(sequence):
         pitch, normalized_velocity, accumulated_time_delta, _ = event
 
-        # For the first event, delta_time is just its accumulated_time_delta converted to ticks
-        # For subsequent events, delta_time is the difference in accumulated_time_delta converted to ticks
-        if i == 0:
-            delta_time = int(accumulated_time_delta * ticks_per_beat)
-        else:
-            delta_time = int((accumulated_time_delta - last_accumulated_time_delta) * ticks_per_beat)
-
+        # Ensure delta_time is non-negative
+        delta_time = max(0, int((accumulated_time_delta - last_accumulated_time_delta) * ticks_per_beat))
         print(f"Event {i}: accumulated_time_delta = {accumulated_time_delta}, delta_time = {delta_time}")
 
         # Update last_accumulated_time_delta for the next iteration
@@ -30,8 +25,8 @@ def sequence_to_midi(sequence, output_file, ticks_per_beat=480, default_note_dur
 
         # Rescale velocity back to MIDI standards
         velocity = int(normalized_velocity * 127)
-        pitch = max(0, min(int(pitch), 127))
-        velocity = max(0, min(velocity, 127))
+        pitch = max(0, min(int(pitch), 127))  # Ensure pitch is within MIDI range
+        velocity = max(0, min(velocity, 127))  # Ensure velocity is within MIDI range
 
         # Add 'note_on' and 'note_off' messages with calculated delta_time
         track.append(Message('note_on', note=pitch, velocity=velocity, time=delta_time))

@@ -3,6 +3,7 @@ import numpy as np
 from pathlib import Path
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.models import load_model
 
 # Adjust Python path for relative imports
 current_script_path = Path(__file__).resolve()
@@ -16,6 +17,7 @@ from models.rnn_model import build_multi_output_rnn_model
 # Define paths relative to project root
 data_processed_dir = project_root / 'data/processed'
 output_models_dir = project_root / 'outputs/models'
+log_file_path = output_models_dir / 'training_log.txt'
 
 # Ensure the output directory exists
 output_models_dir.mkdir(parents=True, exist_ok=True)
@@ -23,77 +25,107 @@ output_models_dir.mkdir(parents=True, exist_ok=True)
 # Parameters (adjust as needed)
 batch_size = 40  # Adjusted batch size
 epochs = 60
+validation_split = 0.2
+early_stopping_patience = 10
 
-# Initialize lists for data accumulation
-all_sequences = []
-all_pitches = []
-all_velocities = []
-all_time_deltas = []
+# Initialize the EarlyStopping callback
+early_stopping = EarlyStopping(
+    monitor='val_loss',
+    patience=early_stopping_patience,
+    verbose=1,
+    mode='auto',
+    restore_best_weights=True
+)
 
-# Process each .npz file in the processed data directory
-for npz_file in data_processed_dir.glob('*.npz'):
+# Define fixed ranges
+FIXED_PITCH_RANGE = 128  # MIDI has 128 pitches
+FIXED_TIME_DELTA_RANGE = 100  # Define according to your data
+FIXED_VELOCITY_RANGE = 1  # Since velocities are normalized
+num_units=64
+dropout_rate=0.3
+
+# Function to process and train model per npz file
+def process_and_train(npz_file, model=None):
     print(f"Processing file: {npz_file.name}")
 
     # Load data
     with np.load(npz_file, allow_pickle=True) as data:
-        sequences = data['sequences']
-        next_events = data['next_events']
-    
-    # Accumulate data
-    all_sequences.append(sequences)
-    all_pitches.extend(next_events[:, 1])  # Assuming pitch is the second element
-    all_velocities.extend(next_events[:, 2] / 127)  # Normalize velocity
-    all_time_deltas.extend(next_events[:, 3])  # Assuming time_delta is the fourth element
+        sequences = data['sequences']  # Adjust key if necessary
+        next_events = data['next_events']  # Adjust key if necessary
 
-# Convert lists to numpy arrays
-all_sequences = np.concatenate(all_sequences, axis=0)
-all_pitches = np.array(all_pitches)
-all_velocities = np.array(all_velocities)
-all_time_deltas = np.array(all_time_deltas)
+    # Prepare data for training
+    note_events = next_events[:, 0]  # Assuming note event is the first element
+    pitches = next_events[:, 1]  # Assuming pitch is the second element
+    velocities = next_events[:, 2]  # Assuming velocity is the third element
+    time_deltas = next_events[:, 3]  # Assuming time_delta is the fourth element
 
-# Determine the range for pitch and time_delta components
-pitch_range = int(np.max(all_pitches)) + 1
-time_delta_range = int(np.max(all_time_deltas)) + 1
+    X = sequences
+    y_note_event = to_categorical(note_events, num_classes=2)  # Note on/off
+    y_pitch = to_categorical(pitches, num_classes=FIXED_PITCH_RANGE)
+    y_velocity = velocities.reshape(-1, 1)  # Ensure it's a 2D array for model
+    y_time_delta = to_categorical(time_deltas, num_classes=FIXED_TIME_DELTA_RANGE)
 
-# Prepare data for training
-X = all_sequences
-y_pitch = to_categorical(all_pitches, num_classes=pitch_range)
-y_velocity = all_velocities  # Directly use normalized velocities
-y_time_delta = to_categorical(all_time_deltas, num_classes=time_delta_range)
+    if model is None:
+        print("Initializing new model.")
+        sequence_length, num_features = X.shape[1], X.shape[2]
+        model = build_multi_output_rnn_model((sequence_length, num_features),
+                                             num_units=num_units,
+                                             dropout_rate=dropout_rate,
+                                             pitch_range=FIXED_PITCH_RANGE,
+                                             velocity_range=FIXED_VELOCITY_RANGE,
+                                             time_delta_range=FIXED_TIME_DELTA_RANGE)
 
-# Define model input shape and build the model
-sequence_length, num_features = X.shape[1], X.shape[2]
-model = build_multi_output_rnn_model((sequence_length, num_features), num_units=64, dropout_rate=0.3,
-                                     pitch_range=pitch_range, velocity_range=1,
-                                     time_delta_range=time_delta_range)
+        model.compile(optimizer='adam',
+                      loss={'note_event_output': 'categorical_crossentropy',
+                            'pitch_output': 'categorical_crossentropy',
+                            'velocity_output': 'mean_squared_error',
+                            'time_delta_output': 'categorical_crossentropy'},
+                      metrics={'note_event_output': 'accuracy',
+                               'pitch_output': 'accuracy',
+                               'velocity_output': 'mse',
+                               'time_delta_output': 'accuracy'})
 
-# Compile the model with adjusted loss for velocity
-model.compile(optimizer='adam', 
-              loss={'pitch_output': 'categorical_crossentropy',
-                    'velocity_output': 'mean_squared_error',
-                    'time_delta_output': 'categorical_crossentropy'},
-              metrics=['accuracy'])
+    # Train the model
+    model.fit(X, {'note_event_output': y_note_event, 'pitch_output': y_pitch, 'velocity_output': y_velocity, 'time_delta_output': y_time_delta},
+              batch_size=batch_size, epochs=epochs, validation_split=validation_split, callbacks=[early_stopping])
 
-# Initialize the EarlyStopping callback
-early_stopping = EarlyStopping(
-    monitor='val_loss',      # Monitor the validation loss
-    min_delta=0.001,         # Minimum change to qualify as an improvement
-    patience=10,             # Number of epochs with no improvement after which training will be stopped
-    verbose=1,               # Log when training is stopped
-    mode='auto',             # Infer the direction of monitoring (minimizing loss)
-    restore_best_weights=True # Restore model weights from the epoch with the best value of the monitored quantity
-)
+    print(f"Completed processing {npz_file.name}")
 
-# Train the model
-history = model.fit(
-    X, {'pitch_output': y_pitch, 'velocity_output': y_velocity, 'time_delta_output': y_time_delta},
-    batch_size=batch_size,
-    epochs=epochs,
-    validation_split=0.2,
-    callbacks=[early_stopping]  # Include the callback in the training process
-)
+    # Log the processed file
+    with open(log_file_path, 'a') as log_file:
+        log_file.write(f"{npz_file.name}\n")
 
-# Save the trained model
-model_save_path = output_models_dir / "combined_model.h5"
-model.save(model_save_path)
-print(f"Model saved to {model_save_path}")
+    return model
+
+# Read the existing training log
+def read_training_log(log_file_path):
+    processed_files = set()
+    if log_file_path.exists():
+        with open(log_file_path, 'r') as log_file:
+            processed_files = {line.strip() for line in log_file}
+    return processed_files
+
+processed_files = read_training_log(log_file_path)
+
+# Initialize model to None, it will be created or loaded if exists
+model = None
+model_path = output_models_dir / "latest_model.h5"
+
+# Check if a previously trained model exists and load it
+if model_path.exists():
+    print(f"Loading model from {model_path}")
+    model = load_model(model_path)
+
+# Process each .npz file in the processed data directory
+for npz_file in sorted(data_processed_dir.glob('*.npz')):
+    if npz_file.name in processed_files:
+        print(f"Skipping already processed file: {npz_file.name}")
+        continue
+
+    # Process and train the model with the current .npz file
+    model = process_and_train(npz_file, model)
+
+    # Save the latest model after each file is processed to facilitate resuming training
+    latest_model_save_path = output_models_dir / "latest_model.h5"
+    model.save(latest_model_save_path)
+    print(f"Latest model saved to {latest_model_save_path}")

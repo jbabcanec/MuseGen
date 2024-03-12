@@ -1,0 +1,663 @@
+Processing chpn-p1.mid...
+
+Track 0: Chopin Prelude  No. 1, Opus 28
+Track 1: Piano right
+Note ON: Time 160, Note Name: C4, Velocity: 49
+Note OFF: Time 240, Note Name: C4
+Note ON: Time 240, Note Name: G4, Velocity: 53
+Note ON: Time 240, Note Name: E4, Velocity: 33
+Note OFF: Time 320, Note Name: E4
+Note ON: Time 320, Note Name: C4, Velocity: 43
+Note OFF: Time 400, Note Name: C4
+Note OFF: Time 400, Note Name: G4
+Note ON: Time 400, Note Name: A4, Velocity: 43
+Note OFF: Time 480, Note Name: A4
+Note ON: Time 640, Note Name: D4, Velocity: 51
+Note OFF: Time 720, Note Name: D4
+Note ON: Time 720, Note Name: G4, Velocity: 59
+Note ON: Time 720, Note Name: F4, Velocity: 40
+Note OFF: Time 800, Note Name: F4
+Note ON: Time 800, Note Name: D4, Velocity: 47
+Note OFF: Time 880, Note Name: D4
+Note OFF: Time 880, Note Name: G4
+Note ON: Time 880, Note Name: A4, Velocity: 45
+Note OFF: Time 960, Note Name: A4
+Note ON: Time 1120, Note Name: C4, Velocity: 59
+Note OFF: Time 1200, Note Name: C4
+Note ON: Time 1200, Note Name: G4, Velocity: 67
+Note ON: Time 1200, Note Name: E4, Velocity: 46
+Note OFF: Time 1280, Note Name: E4
+Note ON: Time 1280, Note Name: C4, Velocity: 61
+Note OFF: Time 1360, Note Name: C4
+Note OFF: Time 1360, Note Name: G4
+Note ON: Time 1360, Note Name: A4, Velocity: 65
+Note OFF: Time 1440, Note Name: A4
+Note ON: Time 1600, Note Name: E4, Velocity: 70
+Note OFF: Time 1680, Note Name: E4
+Note ON: Time 1680, Note Name: B4, Velocity: 75
+Note ON: Time 1680, Note Name: G4, Velocity: 52
+Note OFF: Time 1760, Note Name: G4
+Note ON: Time 1760, Note Name: E4, Velocity: 70
+Note OFF: Time 1840, Note Name: E4
+Note OFF: Time 1840, Note Name: B4
+Note ON: Time 1840, Note Name: C5, Velocity: 78
+Note OFF: Time 1920, Note Name: C5
+Note ON: Time 2000, Note Name: E4, Velocity: 79
+Note ON: Time 2080, Note Name: A4, Velocity: 75
+Note OFF: Time 2160, Note Name: A4
+Note ON: Time 2160, Note Name: E5, Velocity: 80
+Note ON: Time 2160, Note Name: C5, Velocity: 58
+Note OFF: Time 2240, Note Name: C5
+Note ON: Time 2240, Note Name: A4, Velocity: 75
+Note OFF: Time 2320, Note Name: A4
+Note OFF: Time 2320, Note Name: E5
+Note OFF: Time 2320, Note Name: E4
+Note ON: Time 2320, Note Name: D4, Velocity: 80
+Note ON: Time 2320, Note Name: D5, Velocity: 80
+Note OFF: Time 2400, Note Name: D5
+Note OFF: Time 2400, Note Name: D4
+Note ON: Time 2480, Note Name: E4, Velocity: 86
+Note ON: Time 2560, Note Name: A4, Velocity: 82
+Note OFF: Time 2640, Note Name: A4
+Note ON: Time 2640, Note Name: E5, Velocity: 88
+Note ON: Time 2640, Note Name: C5, Velocity: 61
+Note OFF: Time 2720, Note Name: C5
+Note ON: Time 2720, Note Name: A4, Velocity: 82
+Note OFF: Time 2800, Note Name: A4
+Note OFF: Time 2800, Note Name: E5
+Note OFF: Time 2800, Note Name: E4
+Note ON: Time 2800, Note Name: D4, Velocity: 84
+Note ON: Time 2800, Note Name: D5, Velocity: 84
+Note OFF: Time 2880, Note Name: D5
+Note OFF: Time 2880, Note Name: D4
+Note ON: Time 2960, Note Name: E4, Velocity: 86
+Note ON: Time 3040, Note Name: G4, Velocity: 82
+Note OFF: Time 3120, Note Name: G4
+Note ON: Time 3120, Note Name: E5, Velocity: 88
+Note ON: Time 3120, Note Name: B4, Velocity: 55
+Note OFF: Time 3200, Note Name: B4
+Note ON: Time 3200, Note Name: G4, Velocity: 74
+Note OFF: Time 3280, Note Name: G4
+Note OFF: Time 3280, Note Name: E5
+Note OFF: Time 3280, Note Name: E4
+Note ON: Time 3280, Note Name: D4, Velocity: 67
+Note ON: Time 3280, Note Name: D5, Velocity: 82
+Note OFF: Time 3360, Note Name: D5
+Note OFF: Time 3360, Note Name: D4
+Note ON: Time 3520, Note Name: D4, Velocity: 56
+Note OFF: Time 3600, Note Name: D4
+Note ON: Time 3600, Note Name: B4, Velocity: 59
+Note ON: Time 3600, Note Name: F4, Velocity: 41
+Note OFF: Time 3680, Note Name: F4
+Note ON: Time 3680, Note Name: D4, Velocity: 50
+Note OFF: Time 3760, Note Name: D4
+Note OFF: Time 3760, Note Name: B4
+Note ON: Time 3760, Note Name: A4, Velocity: 47
+Note OFF: Time 3840, Note Name: A4
+Note ON: Time 4000, Note Name: C4, Velocity: 53
+Note OFF: Time 4080, Note Name: C4
+Note ON: Time 4080, Note Name: G4, Velocity: 60
+Note ON: Time 4080, Note Name: E4, Velocity: 36
+Note OFF: Time 4160, Note Name: E4
+Note ON: Time 4160, Note Name: C4, Velocity: 51
+Note OFF: Time 4240, Note Name: C4
+Note OFF: Time 4240, Note Name: G4
+Note ON: Time 4240, Note Name: A4, Velocity: 45
+Note OFF: Time 4320, Note Name: A4
+Note ON: Time 4480, Note Name: D4, Velocity: 58
+Note OFF: Time 4560, Note Name: D4
+Note ON: Time 4560, Note Name: G4, Velocity: 61
+Note ON: Time 4560, Note Name: F4, Velocity: 45
+Note OFF: Time 4640, Note Name: F4
+Note ON: Time 4640, Note Name: D4, Velocity: 58
+Note OFF: Time 4720, Note Name: D4
+Note OFF: Time 4720, Note Name: G4
+Note ON: Time 4720, Note Name: A4, Velocity: 51
+Note OFF: Time 4800, Note Name: A4
+Note ON: Time 4960, Note Name: C4, Velocity: 64
+Note OFF: Time 5040, Note Name: C4
+Note ON: Time 5040, Note Name: G4, Velocity: 72
+Note ON: Time 5040, Note Name: E4, Velocity: 49
+Note OFF: Time 5120, Note Name: E4
+Note ON: Time 5120, Note Name: C4, Velocity: 66
+Note OFF: Time 5200, Note Name: C4
+Note OFF: Time 5200, Note Name: G4
+Note ON: Time 5200, Note Name: A4, Velocity: 62
+Note OFF: Time 5280, Note Name: A4
+Note ON: Time 5440, Note Name: E4, Velocity: 70
+Note OFF: Time 5520, Note Name: E4
+Note ON: Time 5520, Note Name: B4, Velocity: 75
+Note ON: Time 5520, Note Name: G4, Velocity: 52
+Note OFF: Time 5600, Note Name: G4
+Note ON: Time 5600, Note Name: E4, Velocity: 70
+Note OFF: Time 5680, Note Name: E4
+Note OFF: Time 5680, Note Name: B4
+Note ON: Time 5680, Note Name: C5, Velocity: 69
+Note OFF: Time 5760, Note Name: C5
+Note ON: Time 5840, Note Name: C#4, Velocity: 69
+Note ON: Time 5920, Note Name: F4, Velocity: 75
+Note OFF: Time 6000, Note Name: F4
+Note ON: Time 6000, Note Name: C#5, Velocity: 80
+Note ON: Time 6000, Note Name: A4, Velocity: 55
+Note OFF: Time 6080, Note Name: A4
+Note ON: Time 6080, Note Name: F4, Velocity: 75
+Note OFF: Time 6160, Note Name: F4
+Note OFF: Time 6160, Note Name: C#5
+Note OFF: Time 6160, Note Name: C#4
+Note ON: Time 6160, Note Name: D4, Velocity: 58
+Note ON: Time 6160, Note Name: D5, Velocity: 73
+Note OFF: Time 6240, Note Name: D5
+Note OFF: Time 6240, Note Name: D4
+Note ON: Time 6320, Note Name: D#4, Velocity: 72
+Note ON: Time 6400, Note Name: G4, Velocity: 78
+Note OFF: Time 6480, Note Name: G4
+Note ON: Time 6480, Note Name: D#5, Velocity: 82
+Note ON: Time 6480, Note Name: C5, Velocity: 57
+Note OFF: Time 6560, Note Name: C5
+Note ON: Time 6560, Note Name: G4, Velocity: 78
+Note OFF: Time 6640, Note Name: G4
+Note OFF: Time 6640, Note Name: D#5
+Note OFF: Time 6640, Note Name: D#4
+Note ON: Time 6640, Note Name: E5, Velocity: 78
+Note ON: Time 6640, Note Name: E4, Velocity: 61
+Note OFF: Time 6720, Note Name: E4
+Note OFF: Time 6720, Note Name: E5
+Note ON: Time 6800, Note Name: G4, Velocity: 75
+Note ON: Time 6880, Note Name: A4, Velocity: 80
+Note OFF: Time 6960, Note Name: A4
+Note ON: Time 6960, Note Name: G5, Velocity: 86
+Note ON: Time 6960, Note Name: C5, Velocity: 60
+Note OFF: Time 7040, Note Name: C5
+Note ON: Time 7040, Note Name: A4, Velocity: 75
+Note OFF: Time 7120, Note Name: A4
+Note OFF: Time 7120, Note Name: G5
+Note OFF: Time 7120, Note Name: G4
+Note ON: Time 7120, Note Name: F4, Velocity: 63
+Note ON: Time 7120, Note Name: F5, Velocity: 81
+Note OFF: Time 7200, Note Name: F5
+Note OFF: Time 7200, Note Name: F4
+Note ON: Time 7280, Note Name: D#4, Velocity: 91
+Note ON: Time 7360, Note Name: G4, Velocity: 82
+Note OFF: Time 7440, Note Name: G4
+Note ON: Time 7440, Note Name: D#5, Velocity: 91
+Note ON: Time 7440, Note Name: C5, Velocity: 61
+Note OFF: Time 7520, Note Name: C5
+Note ON: Time 7520, Note Name: G4, Velocity: 79
+Note OFF: Time 7600, Note Name: G4
+Note OFF: Time 7600, Note Name: D#5
+Note OFF: Time 7600, Note Name: D#4
+Note ON: Time 7600, Note Name: E4, Velocity: 66
+Note ON: Time 7600, Note Name: E5, Velocity: 86
+Note OFF: Time 7680, Note Name: E5
+Note OFF: Time 7680, Note Name: E4
+Note ON: Time 7760, Note Name: E4, Velocity: 92
+Note ON: Time 7840, Note Name: A4, Velocity: 86
+Note OFF: Time 7920, Note Name: A4
+Note ON: Time 7920, Note Name: E5, Velocity: 96
+Note ON: Time 7920, Note Name: C5, Velocity: 63
+Note OFF: Time 8000, Note Name: C5
+Note ON: Time 8000, Note Name: A4, Velocity: 82
+Note OFF: Time 8080, Note Name: A4
+Note OFF: Time 8080, Note Name: E5
+Note OFF: Time 8080, Note Name: E4
+Note ON: Time 8080, Note Name: F4, Velocity: 85
+Note ON: Time 8080, Note Name: F5, Velocity: 85
+Note OFF: Time 8160, Note Name: F5
+Note OFF: Time 8160, Note Name: F4
+Note ON: Time 8160, Note Name: F#4, Velocity: 97
+Note ON: Time 8280, Note Name: B4, Velocity: 81
+Note OFF: Time 8400, Note Name: B4
+Note ON: Time 8400, Note Name: F#5, Velocity: 89
+Note ON: Time 8400, Note Name: D5, Velocity: 70
+Note OFF: Time 8480, Note Name: D5
+Note ON: Time 8480, Note Name: B4, Velocity: 84
+Note OFF: Time 8560, Note Name: B4
+Note OFF: Time 8560, Note Name: F#5
+Note OFF: Time 8560, Note Name: F#4
+Note ON: Time 8560, Note Name: G4, Velocity: 62
+Note ON: Time 8560, Note Name: G5, Velocity: 81
+Note OFF: Time 8640, Note Name: G5
+Note OFF: Time 8640, Note Name: G4
+Note ON: Time 8640, Note Name: G#4, Velocity: 99
+Note ON: Time 8760, Note Name: C5, Velocity: 82
+Note OFF: Time 8880, Note Name: C5
+Note ON: Time 8880, Note Name: G#5, Velocity: 91
+Note ON: Time 8880, Note Name: E5, Velocity: 72
+Note OFF: Time 8960, Note Name: E5
+Note ON: Time 8960, Note Name: C5, Velocity: 82
+Note OFF: Time 9040, Note Name: C5
+Note OFF: Time 9040, Note Name: G#5
+Note OFF: Time 9040, Note Name: G#4
+Note ON: Time 9040, Note Name: A4, Velocity: 64
+Note ON: Time 9040, Note Name: A5, Velocity: 85
+Note OFF: Time 9120, Note Name: A5
+Note OFF: Time 9120, Note Name: A4
+Note ON: Time 9120, Note Name: A#4, Velocity: 100
+Note ON: Time 9240, Note Name: D5, Velocity: 82
+Note OFF: Time 9360, Note Name: D5
+Note ON: Time 9360, Note Name: A#5, Velocity: 100
+Note ON: Time 9360, Note Name: G5, Velocity: 61
+Note OFF: Time 9440, Note Name: G5
+Note ON: Time 9440, Note Name: D5, Velocity: 97
+Note OFF: Time 9520, Note Name: D5
+Note OFF: Time 9520, Note Name: A#5
+Note OFF: Time 9520, Note Name: A#4
+Note ON: Time 9520, Note Name: B4, Velocity: 67
+Note ON: Time 9520, Note Name: B5, Velocity: 93
+Note OFF: Time 9600, Note Name: B5
+Note OFF: Time 9600, Note Name: B4
+Note ON: Time 9680, Note Name: D5, Velocity: 103
+Note ON: Time 9760, Note Name: E5, Velocity: 97
+Note OFF: Time 9840, Note Name: E5
+Note ON: Time 9840, Note Name: D6, Velocity: 108
+Note ON: Time 9840, Note Name: G5, Velocity: 82
+Note OFF: Time 9920, Note Name: G5
+Note ON: Time 9920, Note Name: E5, Velocity: 73
+Note OFF: Time 10000, Note Name: E5
+Note OFF: Time 10000, Note Name: D6
+Note OFF: Time 10000, Note Name: D5
+Note ON: Time 10000, Note Name: C5, Velocity: 54
+Note ON: Time 10000, Note Name: C6, Velocity: 75
+Note OFF: Time 10080, Note Name: C6
+Note OFF: Time 10080, Note Name: C5
+Note ON: Time 10160, Note Name: B4, Velocity: 66
+Note ON: Time 10240, Note Name: C5, Velocity: 67
+Note OFF: Time 10320, Note Name: C5
+Note ON: Time 10320, Note Name: B5, Velocity: 72
+Note ON: Time 10320, Note Name: D#5, Velocity: 49
+Note OFF: Time 10400, Note Name: D#5
+Note ON: Time 10400, Note Name: C5, Velocity: 63
+Note OFF: Time 10480, Note Name: C5
+Note OFF: Time 10480, Note Name: B5
+Note OFF: Time 10480, Note Name: B4
+Note ON: Time 10480, Note Name: A4, Velocity: 50
+Note ON: Time 10480, Note Name: A5, Velocity: 62
+Note OFF: Time 10560, Note Name: A5
+Note OFF: Time 10560, Note Name: A4
+Note ON: Time 10560, Note Name: A4, Velocity: 61
+Note ON: Time 10680, Note Name: C5, Velocity: 59
+Note OFF: Time 10800, Note Name: C5
+Note ON: Time 10800, Note Name: A5, Velocity: 63
+Note ON: Time 10800, Note Name: E5, Velocity: 41
+Note OFF: Time 10880, Note Name: E5
+Note ON: Time 10880, Note Name: C5, Velocity: 61
+Note OFF: Time 10960, Note Name: C5
+Note OFF: Time 10960, Note Name: A5
+Note OFF: Time 10960, Note Name: A4
+Note ON: Time 10960, Note Name: G4, Velocity: 47
+Note ON: Time 10960, Note Name: G5, Velocity: 60
+Note OFF: Time 11040, Note Name: G5
+Note OFF: Time 11040, Note Name: G4
+Note ON: Time 11120, Note Name: E4, Velocity: 56
+Note ON: Time 11200, Note Name: G4, Velocity: 55
+Note OFF: Time 11280, Note Name: G4
+Note ON: Time 11280, Note Name: E5, Velocity: 57
+Note ON: Time 11280, Note Name: B4, Velocity: 36
+Note OFF: Time 11360, Note Name: B4
+Note ON: Time 11360, Note Name: G4, Velocity: 49
+Note OFF: Time 11440, Note Name: G4
+Note OFF: Time 11440, Note Name: E5
+Note OFF: Time 11440, Note Name: E4
+Note ON: Time 11440, Note Name: D4, Velocity: 49
+Note ON: Time 11440, Note Name: D5, Velocity: 49
+Note OFF: Time 11520, Note Name: D5
+Note OFF: Time 11520, Note Name: D4
+Note ON: Time 11640, Note Name: C4, Velocity: 51
+Note OFF: Time 11760, Note Name: C4
+Note ON: Time 11760, Note Name: G4, Velocity: 56
+Note ON: Time 11760, Note Name: E4, Velocity: 35
+Note OFF: Time 11840, Note Name: E4
+Note ON: Time 11840, Note Name: C4, Velocity: 48
+Note OFF: Time 11920, Note Name: C4
+Note OFF: Time 11920, Note Name: G4
+Note ON: Time 11920, Note Name: A4, Velocity: 48
+Note OFF: Time 12000, Note Name: A4
+Note ON: Time 12000, Note Name: E4, Velocity: 41
+Note ON: Time 12120, Note Name: G4, Velocity: 55
+Note OFF: Time 12240, Note Name: G4
+Note ON: Time 12240, Note Name: E5, Velocity: 61
+Note ON: Time 12240, Note Name: B4, Velocity: 38
+Note OFF: Time 12320, Note Name: B4
+Note ON: Time 12320, Note Name: G4, Velocity: 48
+Note OFF: Time 12400, Note Name: G4
+Note OFF: Time 12400, Note Name: E5
+Note OFF: Time 12400, Note Name: E4
+Note ON: Time 12400, Note Name: D4, Velocity: 41
+Note ON: Time 12400, Note Name: D5, Velocity: 48
+Note OFF: Time 12480, Note Name: D5
+Note OFF: Time 12480, Note Name: D4
+Note ON: Time 12640, Note Name: C4, Velocity: 51
+Note OFF: Time 12720, Note Name: C4
+Note ON: Time 12720, Note Name: G4, Velocity: 56
+Note ON: Time 12720, Note Name: E4, Velocity: 35
+Note OFF: Time 12800, Note Name: E4
+Note ON: Time 12800, Note Name: C4, Velocity: 48
+Note OFF: Time 12880, Note Name: C4
+Note OFF: Time 12880, Note Name: G4
+Note ON: Time 12880, Note Name: A4, Velocity: 48
+Note OFF: Time 12960, Note Name: A4
+Note ON: Time 13040, Note Name: E4, Velocity: 41
+Note ON: Time 13120, Note Name: G4, Velocity: 55
+Note OFF: Time 13200, Note Name: G4
+Note ON: Time 13200, Note Name: E5, Velocity: 61
+Note ON: Time 13200, Note Name: B4, Velocity: 38
+Note OFF: Time 13280, Note Name: B4
+Note ON: Time 13280, Note Name: G4, Velocity: 48
+Note OFF: Time 13360, Note Name: G4
+Note OFF: Time 13360, Note Name: E5
+Note OFF: Time 13360, Note Name: E4
+Note ON: Time 13360, Note Name: D4, Velocity: 41
+Note ON: Time 13360, Note Name: D5, Velocity: 48
+Note OFF: Time 13440, Note Name: D5
+Note OFF: Time 13440, Note Name: D4
+Note ON: Time 13520, Note Name: C4, Velocity: 41
+Note ON: Time 13600, Note Name: F4, Velocity: 51
+Note OFF: Time 13680, Note Name: F4
+Note OFF: Time 13680, Note Name: C4
+Note ON: Time 13680, Note Name: C5, Velocity: 56
+Note ON: Time 13680, Note Name: A4, Velocity: 35
+Note OFF: Time 13760, Note Name: A4
+Note ON: Time 13760, Note Name: F4, Velocity: 45
+Note OFF: Time 13840, Note Name: F4
+Note ON: Time 13840, Note Name: E4, Velocity: 41
+Note ON: Time 13840, Note Name: G4, Velocity: 41
+Note OFF: Time 13920, Note Name: G4
+Note OFF: Time 13920, Note Name: E4
+Note ON: Time 14000, Note Name: C4, Velocity: 42
+Note ON: Time 14080, Note Name: F4, Velocity: 56
+Note OFF: Time 14160, Note Name: F4
+Note OFF: Time 14160, Note Name: C4
+Note OFF: Time 14160, Note Name: C5
+Note ON: Time 14160, Note Name: C5, Velocity: 64
+Note ON: Time 14160, Note Name: A4, Velocity: 39
+Note OFF: Time 14240, Note Name: A4
+Note ON: Time 14240, Note Name: F4, Velocity: 45
+Note OFF: Time 14320, Note Name: F4
+Note ON: Time 14320, Note Name: E4, Velocity: 41
+Note ON: Time 14320, Note Name: G4, Velocity: 41
+Note OFF: Time 14400, Note Name: G4
+Note OFF: Time 14400, Note Name: E4
+Note ON: Time 14480, Note Name: C4, Velocity: 40
+Note ON: Time 14560, Note Name: F4, Velocity: 49
+Note OFF: Time 14640, Note Name: F4
+Note OFF: Time 14640, Note Name: C4
+Note OFF: Time 14640, Note Name: C5
+Note ON: Time 14640, Note Name: C5, Velocity: 52
+Note ON: Time 14640, Note Name: A4, Velocity: 33
+Note OFF: Time 14720, Note Name: A4
+Note ON: Time 14720, Note Name: F4, Velocity: 41
+Note OFF: Time 14800, Note Name: F4
+Note ON: Time 14800, Note Name: E4, Velocity: 38
+Note ON: Time 14800, Note Name: G4, Velocity: 38
+Note OFF: Time 14880, Note Name: G4
+Note OFF: Time 14880, Note Name: E4
+Note ON: Time 14960, Note Name: C4, Velocity: 37
+Note ON: Time 15040, Note Name: F4, Velocity: 44
+Note OFF: Time 15120, Note Name: F4
+Note OFF: Time 15120, Note Name: C4
+Note OFF: Time 15120, Note Name: C5
+Note ON: Time 15120, Note Name: C5, Velocity: 46
+Note ON: Time 15120, Note Name: A4, Velocity: 29
+Note OFF: Time 15200, Note Name: A4
+Note ON: Time 15200, Note Name: F4, Velocity: 36
+Note OFF: Time 15280, Note Name: F4
+Note ON: Time 15280, Note Name: E4, Velocity: 33
+Note ON: Time 15280, Note Name: G4, Velocity: 33
+Note OFF: Time 15360, Note Name: G4
+Note OFF: Time 15360, Note Name: E4
+Note OFF: Time 15360, Note Name: C5
+Note ON: Time 15760, Note Name: C4, Velocity: 33
+Note ON: Time 15840, Note Name: E4, Velocity: 33
+Note OFF: Time 16320, Note Name: E4
+Note OFF: Time 16320, Note Name: C4
+Track 2: Piano left
+Note ON: Time 1, Note Name: C2, Velocity: 46
+Note OFF: Time 80, Note Name: C2
+Note ON: Time 80, Note Name: G3, Velocity: 36
+Note ON: Time 80, Note Name: G2, Velocity: 30
+Note OFF: Time 160, Note Name: G2
+Note ON: Time 160, Note Name: E3, Velocity: 36
+Note OFF: Time 240, Note Name: E3
+Note OFF: Time 400, Note Name: G3
+Note ON: Time 400, Note Name: A3, Velocity: 27
+Note OFF: Time 480, Note Name: A3
+Note ON: Time 480, Note Name: B1, Velocity: 51
+Note OFF: Time 560, Note Name: B1
+Note ON: Time 560, Note Name: G3, Velocity: 47
+Note ON: Time 560, Note Name: G2, Velocity: 38
+Note OFF: Time 640, Note Name: G2
+Note ON: Time 640, Note Name: F3, Velocity: 36
+Note OFF: Time 720, Note Name: F3
+Note OFF: Time 880, Note Name: G3
+Note ON: Time 880, Note Name: A3, Velocity: 33
+Note OFF: Time 960, Note Name: A3
+Note ON: Time 960, Note Name: C2, Velocity: 53
+Note OFF: Time 1040, Note Name: C2
+Note ON: Time 1040, Note Name: G3, Velocity: 56
+Note ON: Time 1040, Note Name: G2, Velocity: 47
+Note OFF: Time 1120, Note Name: G2
+Note ON: Time 1120, Note Name: E3, Velocity: 47
+Note OFF: Time 1200, Note Name: E3
+Note OFF: Time 1360, Note Name: G3
+Note ON: Time 1360, Note Name: A3, Velocity: 52
+Note OFF: Time 1440, Note Name: A3
+Note ON: Time 1440, Note Name: E2, Velocity: 79
+Note OFF: Time 1520, Note Name: E2
+Note ON: Time 1520, Note Name: B3, Velocity: 66
+Note ON: Time 1520, Note Name: E3, Velocity: 55
+Note OFF: Time 1600, Note Name: E3
+Note ON: Time 1600, Note Name: G3, Velocity: 56
+Note OFF: Time 1680, Note Name: G3
+Note OFF: Time 1840, Note Name: B3
+Note ON: Time 1840, Note Name: C4, Velocity: 62
+Note OFF: Time 1920, Note Name: C4
+Note ON: Time 1920, Note Name: F2, Velocity: 84
+Note OFF: Time 2000, Note Name: F2
+Note ON: Time 2000, Note Name: E3, Velocity: 68
+Note OFF: Time 2080, Note Name: E3
+Note ON: Time 2080, Note Name: A3, Velocity: 59
+Note OFF: Time 2160, Note Name: A3
+Note ON: Time 2400, Note Name: F#2, Velocity: 91
+Note OFF: Time 2480, Note Name: F#2
+Note ON: Time 2480, Note Name: D3, Velocity: 75
+Note OFF: Time 2560, Note Name: D3
+Note ON: Time 2560, Note Name: C4, Velocity: 64
+Note OFF: Time 2640, Note Name: C4
+Note ON: Time 2880, Note Name: G2, Velocity: 97
+Note OFF: Time 2960, Note Name: G2
+Note ON: Time 2960, Note Name: F3, Velocity: 79
+Note OFF: Time 3040, Note Name: F3
+Note ON: Time 3040, Note Name: B3, Velocity: 67
+Note OFF: Time 3120, Note Name: B3
+Note ON: Time 3360, Note Name: G1, Velocity: 58
+Note OFF: Time 3440, Note Name: G1
+Note ON: Time 3440, Note Name: B3, Velocity: 50
+Note ON: Time 3440, Note Name: G2, Velocity: 42
+Note OFF: Time 3520, Note Name: G2
+Note ON: Time 3520, Note Name: F3, Velocity: 38
+Note OFF: Time 3600, Note Name: F3
+Note OFF: Time 3760, Note Name: B3
+Note ON: Time 3760, Note Name: A3, Velocity: 39
+Note OFF: Time 3840, Note Name: A3
+Note ON: Time 3840, Note Name: C2, Velocity: 51
+Note OFF: Time 3920, Note Name: C2
+Note ON: Time 3920, Note Name: G3, Velocity: 44
+Note ON: Time 3920, Note Name: G2, Velocity: 37
+Note OFF: Time 4000, Note Name: G2
+Note ON: Time 4000, Note Name: E3, Velocity: 39
+Note OFF: Time 4080, Note Name: E3
+Note OFF: Time 4240, Note Name: G3
+Note ON: Time 4240, Note Name: A3, Velocity: 38
+Note OFF: Time 4320, Note Name: A3
+Note ON: Time 4320, Note Name: B1, Velocity: 53
+Note OFF: Time 4400, Note Name: B1
+Note ON: Time 4400, Note Name: G3, Velocity: 51
+Note ON: Time 4400, Note Name: G2, Velocity: 42
+Note OFF: Time 4480, Note Name: G2
+Note ON: Time 4480, Note Name: F3, Velocity: 44
+Note OFF: Time 4560, Note Name: F3
+Note OFF: Time 4720, Note Name: G3
+Note ON: Time 4720, Note Name: A3, Velocity: 44
+Note OFF: Time 4800, Note Name: A3
+Note ON: Time 4800, Note Name: C2, Velocity: 63
+Note OFF: Time 4880, Note Name: C2
+Note ON: Time 4880, Note Name: G3, Velocity: 60
+Note ON: Time 4880, Note Name: G2, Velocity: 50
+Note OFF: Time 4960, Note Name: G2
+Note ON: Time 4960, Note Name: E3, Velocity: 63
+Note OFF: Time 5040, Note Name: E3
+Note OFF: Time 5200, Note Name: G3
+Note ON: Time 5200, Note Name: A3, Velocity: 50
+Note OFF: Time 5280, Note Name: A3
+Note ON: Time 5280, Note Name: E2, Velocity: 79
+Note OFF: Time 5360, Note Name: E2
+Note ON: Time 5360, Note Name: B3, Velocity: 66
+Note ON: Time 5360, Note Name: E3, Velocity: 66
+Note OFF: Time 5440, Note Name: E3
+Note ON: Time 5440, Note Name: G3, Velocity: 56
+Note OFF: Time 5520, Note Name: G3
+Note OFF: Time 5680, Note Name: B3
+Note ON: Time 5680, Note Name: C4, Velocity: 55
+Note OFF: Time 5760, Note Name: C4
+Note ON: Time 5760, Note Name: F2, Velocity: 84
+Note OFF: Time 5840, Note Name: F2
+Note ON: Time 5840, Note Name: C3, Velocity: 69
+Note OFF: Time 5920, Note Name: C3
+Note ON: Time 5920, Note Name: A3, Velocity: 60
+Note OFF: Time 6000, Note Name: A3
+Note ON: Time 6240, Note Name: G2, Velocity: 89
+Note OFF: Time 6320, Note Name: G2
+Note ON: Time 6320, Note Name: C3, Velocity: 72
+Note OFF: Time 6400, Note Name: C3
+Note ON: Time 6400, Note Name: A#3, Velocity: 61
+Note OFF: Time 6480, Note Name: A#3
+Note ON: Time 6720, Note Name: A2, Velocity: 91
+Note OFF: Time 6800, Note Name: A2
+Note ON: Time 6800, Note Name: F3, Velocity: 75
+Note OFF: Time 6880, Note Name: F3
+Note ON: Time 6880, Note Name: C4, Velocity: 58
+Note OFF: Time 6960, Note Name: C4
+Note ON: Time 7200, Note Name: G2, Velocity: 91
+Note OFF: Time 7280, Note Name: G2
+Note ON: Time 7280, Note Name: C3, Velocity: 78
+Note OFF: Time 7360, Note Name: C3
+Note ON: Time 7360, Note Name: C4, Velocity: 61
+Note OFF: Time 7440, Note Name: C4
+Note ON: Time 7680, Note Name: A2, Velocity: 92
+Note OFF: Time 7760, Note Name: A2
+Note ON: Time 7760, Note Name: F3, Velocity: 77
+Note OFF: Time 7840, Note Name: F3
+Note ON: Time 7840, Note Name: C4, Velocity: 61
+Note OFF: Time 7920, Note Name: C4
+Note ON: Time 8160, Note Name: B2, Velocity: 67
+Note OFF: Time 8240, Note Name: B2
+Note ON: Time 8240, Note Name: G3, Velocity: 72
+Note OFF: Time 8320, Note Name: G3
+Note ON: Time 8320, Note Name: D4, Velocity: 74
+Note OFF: Time 8400, Note Name: D4
+Note ON: Time 8640, Note Name: C3, Velocity: 73
+Note OFF: Time 8720, Note Name: C3
+Note ON: Time 8720, Note Name: G3, Velocity: 80
+Note OFF: Time 8800, Note Name: G3
+Note ON: Time 8800, Note Name: E4, Velocity: 80
+Note OFF: Time 8880, Note Name: E4
+Note ON: Time 9120, Note Name: D3, Velocity: 77
+Note OFF: Time 9200, Note Name: D3
+Note ON: Time 9200, Note Name: G3, Velocity: 84
+Note OFF: Time 9280, Note Name: G3
+Note ON: Time 9280, Note Name: F4, Velocity: 84
+Note OFF: Time 9360, Note Name: F4
+Note ON: Time 9600, Note Name: E3, Velocity: 102
+Note OFF: Time 9680, Note Name: E3
+Note ON: Time 9680, Note Name: C4, Velocity: 90
+Note OFF: Time 9760, Note Name: C4
+Note ON: Time 9760, Note Name: G4, Velocity: 71
+Note OFF: Time 9840, Note Name: G4
+Note ON: Time 10080, Note Name: F#2, Velocity: 74
+Note OFF: Time 10160, Note Name: F#2
+Note ON: Time 10160, Note Name: D#3, Velocity: 63
+Note OFF: Time 10240, Note Name: D#3
+Note ON: Time 10240, Note Name: C4, Velocity: 50
+Note OFF: Time 10320, Note Name: C4
+Note ON: Time 10560, Note Name: G2, Velocity: 57
+Note OFF: Time 10640, Note Name: G2
+Note ON: Time 10640, Note Name: E3, Velocity: 61
+Note OFF: Time 10720, Note Name: E3
+Note ON: Time 10720, Note Name: C4, Velocity: 56
+Note OFF: Time 10800, Note Name: C4
+Note ON: Time 11040, Note Name: G2, Velocity: 59
+Note OFF: Time 11120, Note Name: G2
+Note ON: Time 11120, Note Name: F3, Velocity: 53
+Note OFF: Time 11200, Note Name: F3
+Note ON: Time 11200, Note Name: B3, Velocity: 41
+Note OFF: Time 11280, Note Name: B3
+Note ON: Time 11520, Note Name: G3, Velocity: 41
+Note ON: Time 11520, Note Name: C2, Velocity: 48
+Note OFF: Time 11600, Note Name: C2
+Note ON: Time 11600, Note Name: G2, Velocity: 41
+Note OFF: Time 11680, Note Name: G2
+Note ON: Time 11680, Note Name: E3, Velocity: 36
+Note OFF: Time 11760, Note Name: E3
+Note OFF: Time 11920, Note Name: G3
+Note ON: Time 11920, Note Name: A3, Velocity: 41
+Note OFF: Time 12000, Note Name: A3
+Note ON: Time 12000, Note Name: C2, Velocity: 48
+Note OFF: Time 12080, Note Name: C2
+Note ON: Time 12080, Note Name: G2, Velocity: 41
+Note OFF: Time 12160, Note Name: G2
+Note ON: Time 12160, Note Name: F3, Velocity: 46
+Note OFF: Time 12240, Note Name: F3
+Note ON: Time 12480, Note Name: C2, Velocity: 48
+Note OFF: Time 12560, Note Name: C2
+Note ON: Time 12560, Note Name: G3, Velocity: 41
+Note ON: Time 12560, Note Name: G2, Velocity: 41
+Note OFF: Time 12640, Note Name: G2
+Note ON: Time 12640, Note Name: E3, Velocity: 36
+Note OFF: Time 12720, Note Name: E3
+Note OFF: Time 12880, Note Name: G3
+Note ON: Time 12880, Note Name: A3, Velocity: 41
+Note OFF: Time 12960, Note Name: A3
+Note ON: Time 12960, Note Name: C2, Velocity: 48
+Note OFF: Time 13040, Note Name: C2
+Note ON: Time 13040, Note Name: G2, Velocity: 41
+Note OFF: Time 13120, Note Name: G2
+Note ON: Time 13120, Note Name: F3, Velocity: 36
+Note OFF: Time 13200, Note Name: F3
+Note ON: Time 13440, Note Name: C2, Velocity: 48
+Note OFF: Time 13520, Note Name: C2
+Note ON: Time 13520, Note Name: G2, Velocity: 41
+Note OFF: Time 13600, Note Name: G2
+Note ON: Time 13600, Note Name: G3, Velocity: 36
+Note OFF: Time 13680, Note Name: G3
+Note ON: Time 13920, Note Name: C2, Velocity: 48
+Note OFF: Time 14000, Note Name: C2
+Note ON: Time 14000, Note Name: G2, Velocity: 42
+Note OFF: Time 14080, Note Name: G2
+Note ON: Time 14080, Note Name: G3, Velocity: 39
+Note OFF: Time 14160, Note Name: G3
+Note ON: Time 14400, Note Name: C2, Velocity: 48
+Note OFF: Time 14480, Note Name: C2
+Note ON: Time 14480, Note Name: G2, Velocity: 40
+Note OFF: Time 14560, Note Name: G2
+Note ON: Time 14560, Note Name: G3, Velocity: 35
+Note OFF: Time 14640, Note Name: G3
+Note ON: Time 14880, Note Name: C2, Velocity: 42
+Note OFF: Time 14960, Note Name: C2
+Note ON: Time 14960, Note Name: G2, Velocity: 37
+Note OFF: Time 15040, Note Name: G2
+Note ON: Time 15040, Note Name: G3, Velocity: 30
+Note OFF: Time 15120, Note Name: G3
+Note ON: Time 15360, Note Name: C2, Velocity: 38
+Note ON: Time 15440, Note Name: G2, Velocity: 33
+Note ON: Time 15520, Note Name: C3, Velocity: 37
+Note ON: Time 15600, Note Name: E3, Velocity: 34
+Note ON: Time 15680, Note Name: G3, Velocity: 38
+Note OFF: Time 16320, Note Name: G3
+Note OFF: Time 16320, Note Name: C3
+Note OFF: Time 16320, Note Name: C2
+Note OFF: Time 16320, Note Name: G2
+Note OFF: Time 16320, Note Name: E3
+Track 3: Chopin: Prelude No.1 in C, Op. 28
+Track 4: Copyright © 2002 by Bernd Krueger
+Track 5: http://www.piano-midi.de
+Track 6: Edition: 2014-02-20
