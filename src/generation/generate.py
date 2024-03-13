@@ -12,7 +12,6 @@ from seeds.load_seed import load_random_seed
 
 # import rules which should theoretically disolve
 from rules.avoid_accumulation import avoid_accumulation
-from rules.ensure_times_in_order import ensure_time_progression
 from rules.prevent_note_off_without_on import prevent_note_off_without_on
 
 
@@ -53,9 +52,6 @@ def generate_music(models, seed_sequence, num_generate=100, temperature=1.0, max
 
             best_velocity = velocity_pred[0][0] * 127
             best_event_time = event_time_pred[0].dot(np.arange(event_time_pred.shape[1]))
-
-            # Adjust event time to ensure progression
-            best_event_time = ensure_time_progression(last_event_time, best_event_time)
 
             # Check note-on accumulation and possibly turn off a note
             if note_event == 1 and len(unresolved_note_ons) >= max_simultaneous_notes:

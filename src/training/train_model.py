@@ -55,6 +55,17 @@ def process_and_train(npz_file, model=None):
 
     # Prepare data for training
     note_events = next_events[:, 0]  # Assuming note event is the first element
+    
+    invalid_events = [(i, event) for i, event in enumerate(note_events) if event not in [0, 1]]
+    if invalid_events:
+        print(f"Skipping {npz_file.name} due to invalid note event values:")
+        for i, event in invalid_events:
+            print(f"  Invalid value {event} at event number {i}")
+
+        with open(log_file_path, 'a') as log_file:
+            log_file.write(f"Skipped {npz_file.name} due to invalid note event values: {[event for _, event in invalid_events]}\n")
+        return model  # Skip the rest of the function
+
     pitches = next_events[:, 1]  # Assuming pitch is the second element
     velocities = next_events[:, 2]  # Assuming velocity is the third element
     time_deltas = next_events[:, 3]  # Assuming time_delta is the fourth element
@@ -96,6 +107,7 @@ def process_and_train(npz_file, model=None):
         log_file.write(f"{npz_file.name}\n")
 
     return model
+
 
 # Read the existing training log
 def read_training_log(log_file_path):

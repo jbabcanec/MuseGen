@@ -5,6 +5,8 @@ processed_folder = './processed'
 file_name = 'chpn_op25_e2_sequences.npz'  # Placeholder file name
 
 def check_npz(file_name):
+    np.set_printoptions(suppress=True)  # Suppress scientific notation
+
     file_path = os.path.join(processed_folder, file_name)
     if not os.path.exists(file_path):
         print(f"File {file_path} not found.")

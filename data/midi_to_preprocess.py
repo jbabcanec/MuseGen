@@ -12,13 +12,14 @@ epsilon = 1e-5  # Small value to avoid log(0)
 if not os.path.exists(processed_folder):
     os.makedirs(processed_folder)
 
-def encode_event(event_type, pitch, velocity, time_delta):
+def encode_event(event_type, pitch, velocity, delta_log_time=None):
     encoded_event_type = 0 if event_type == 'OFF' else 1 if velocity > velocity_threshold else 2
+    # Only include delta_log_time in the encoded event
     return [
         encoded_event_type,
         pitch,
         velocity / 127,
-        np.log1p(time_delta + epsilon)  # Added epsilon to avoid log(0)
+        delta_log_time if delta_log_time is not None else 0  # Use delta_log_time directly
     ]
 
 def log_event_distribution(events):
@@ -55,14 +56,22 @@ def process_file(midi_file):
     # Sort events first by time and then by event type ('OFF' before 'ON')
     events.sort(key=lambda x: (x[0], x[1]))
 
-    # Convert event type back to 'ON'/'OFF' strings if necessary and encode events
-    encoded_events = [encode_event('ON' if etype == 1 else 'OFF', note, velocity, time) for time, etype, note, velocity in events]
+    # Calculate logged times and their differences
+    log_times = [np.log1p(event[0] + epsilon) for event in events]
+    delta_log_times = [log_times[i] - log_times[i-1] for i in range(1, len(log_times))]
+    delta_log_times.insert(0, 0)  # First event has no previous event
+
+    # Encode events using only delta_log_times and log their distribution
+    encoded_events = [encode_event('ON' if etype == 1 else 'OFF', note, velocity, delta_log_times[i]) for i, (_, etype, note, velocity) in enumerate(events)]
     log_event_distribution(encoded_events)
 
+    # Generate sequences and their next events
     sequences, next_events = zip(*[(encoded_events[i:i+sequence_length], encoded_events[i+sequence_length]) for i in range(len(encoded_events) - sequence_length)])
 
     sequences = np.array(sequences)
     next_events = np.array(next_events)
+
+    # Save sequences and their next events to a compressed file
     output_file = os.path.join(processed_folder, midi_file.replace('.mid', '').replace('.midi', '') + '_sequences.npz')
     np.savez_compressed(output_file, sequences=sequences, next_events=next_events)
     print(f"Saved {len(sequences)} sequences and their next events to {output_file}.\n")
