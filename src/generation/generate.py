@@ -3,8 +3,7 @@ import random
 import tensorflow as tf
 from pathlib import Path
 from tensorflow.keras.models import load_model
-from midi_conversion import sequence_to_midi
-
+from midi_conversion import convert_to_midi
 
 # import seeds
 from seeds.random_seed import generate_random_seed
@@ -22,19 +21,19 @@ generated_music_dir = project_root / 'outputs/generated_music'
 sample_dir = project_root / 'data/processed'
 generated_music_dir.mkdir(exist_ok=True)
 
-
-
-def softmax(x, temperature=1.0):
+def softmax(x, temperature):
     """Compute softmax values for each set of scores in x adjusted by temperature."""
     e_x = np.exp((x - np.max(x)) / temperature)
     return e_x / e_x.sum(axis=-1, keepdims=True)
 
 
-def generate_music(models, seed_sequence, num_generate=100, temperature=1.0, max_simultaneous_notes=8):
+def generate_music(models, seed_sequence, num_generate=100, temperature=1000000, max_simultaneous_notes=8):
     input_sequence = np.array(seed_sequence)
     generated_sequence = []
 
-    last_event_time = 0 if len(seed_sequence) == 0 else seed_sequence[-1, -1]
+    # Initialize the cumulative event time starting from 0
+    cumulative_event_time = 0
+
     unresolved_note_ons = set()
 
     for i in range(num_generate):
@@ -51,31 +50,29 @@ def generate_music(models, seed_sequence, num_generate=100, temperature=1.0, max
             pitch = np.random.choice(range(len(pitch_prob)), p=pitch_prob)
 
             best_velocity = velocity_pred[0][0] * 127
-            best_event_time = event_time_pred[0].dot(np.arange(event_time_pred.shape[1]))
 
-            # Check note-on accumulation and possibly turn off a note
-            if note_event == 1 and len(unresolved_note_ons) >= max_simultaneous_notes:
-                note_to_turn_off = unresolved_note_ons.pop()  # Remove and get an unresolved note
-                generated_sequence.append([0, note_to_turn_off, 0, best_event_time])  # Add note-off event for it
+            # Calculate the delta time for the event and add it to the cumulative time
+            event_time_delta = event_time_pred[0].dot(np.arange(event_time_pred.shape[1]))
+            cumulative_event_time += event_time_delta
 
-            if note_event == 1:
-                unresolved_note_ons.add(pitch)  # Add new note-on to unresolved
-            elif note_event == 0 and pitch in unresolved_note_ons:
-                unresolved_note_ons.remove(pitch)  # Remove resolved note-off
+            unresolved_note_ons, note_off_event = avoid_accumulation(
+                unresolved_note_ons, note_event, pitch, max_simultaneous_notes, cumulative_event_time
+            )
 
-            next_event = [note_event, pitch, best_velocity, best_event_time]
+            if note_off_event:
+                generated_sequence.append(note_off_event)  # Add note-off event if returned
+
+            next_event = [note_event, pitch, best_velocity, cumulative_event_time]
             generated_sequence.append(next_event)
             input_sequence = np.vstack([input_sequence[1:], next_event])
 
-            print(f"Selected for event {i+1}: Note Event {note_event}, Pitch {pitch}, Velocity (scaled) {best_velocity:.2f}, Event Time {best_event_time}")
+            print(f"Selected for event {i+1}: Note Event {note_event}, Pitch {pitch}, Velocity (scaled) {best_velocity:.2f}, Event Time {cumulative_event_time}")
             print("------")
 
     # Filter out invalid note-off events
     final_sequence = prevent_note_off_without_on(np.array(generated_sequence))
 
     return final_sequence
-
-
 
 # Initialize the seed sequence with randomness
 # -----------------------------------------------------------------------------
@@ -96,9 +93,11 @@ models = [load_model(model_path) for model_path in models_dir.glob('*.h5')]
 # Generate a sequence of musical events using the ensemble of models
 generated_sequence = generate_music(models, seed_sequence, num_generate=100)
 
+print(generated_sequence)
+
 # Convert the generated sequence to MIDI format and save
 output_path = generated_music_dir / 'generated_ensemble_output.midi'
-#sequence_to_midi(generated_sequence, output_path)
+convert_to_midi(generated_sequence, output_path)
 
 print(f"Generated music saved to {output_path}")
 
@@ -127,3 +126,5 @@ with open(output_text_path, "w") as file:
     file.write("]]")  # End of the outer list
 
 print(f"Generated sequence details saved to {output_text_path}")
+
+

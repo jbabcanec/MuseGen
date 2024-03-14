@@ -22,11 +22,19 @@ log_file_path = output_models_dir / 'training_log.txt'
 # Ensure the output directory exists
 output_models_dir.mkdir(parents=True, exist_ok=True)
 
+# Define fixed ranges
+FIXED_PITCH_RANGE = 128  # MIDI has 128 pitches
+FIXED_TIME_DELTA_RANGE = 3500  # Define according to your data
+FIXED_VELOCITY_RANGE = 128  # Since velocities are normalized
+
+
 # Parameters (adjust as needed)
-batch_size = 40  # Adjusted batch size
-epochs = 60
+batch_size = 40
+epochs = 40
 validation_split = 0.2
 early_stopping_patience = 10
+num_units=64
+dropout_rate=0.3
 
 # Initialize the EarlyStopping callback
 early_stopping = EarlyStopping(
@@ -36,13 +44,6 @@ early_stopping = EarlyStopping(
     mode='auto',
     restore_best_weights=True
 )
-
-# Define fixed ranges
-FIXED_PITCH_RANGE = 128  # MIDI has 128 pitches
-FIXED_TIME_DELTA_RANGE = 100  # Define according to your data
-FIXED_VELOCITY_RANGE = 1  # Since velocities are normalized
-num_units=64
-dropout_rate=0.3
 
 # Function to process and train model per npz file
 def process_and_train(npz_file, model=None):
@@ -73,7 +74,7 @@ def process_and_train(npz_file, model=None):
     X = sequences
     y_note_event = to_categorical(note_events, num_classes=2)  # Note on/off
     y_pitch = to_categorical(pitches, num_classes=FIXED_PITCH_RANGE)
-    y_velocity = velocities.reshape(-1, 1)  # Ensure it's a 2D array for model
+    y_velocity =to_categorical(velocities, num_classes=FIXED_VELOCITY_RANGE)
     y_time_delta = to_categorical(time_deltas, num_classes=FIXED_TIME_DELTA_RANGE)
 
     if model is None:
@@ -89,11 +90,11 @@ def process_and_train(npz_file, model=None):
         model.compile(optimizer='adam',
                       loss={'note_event_output': 'categorical_crossentropy',
                             'pitch_output': 'categorical_crossentropy',
-                            'velocity_output': 'mean_squared_error',
+                            'velocity_output': 'categorical_crossentropy',
                             'time_delta_output': 'categorical_crossentropy'},
                       metrics={'note_event_output': 'accuracy',
                                'pitch_output': 'accuracy',
-                               'velocity_output': 'mse',
+                               'velocity_output': 'accuracy',
                                'time_delta_output': 'accuracy'})
 
     # Train the model

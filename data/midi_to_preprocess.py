@@ -12,15 +12,17 @@ epsilon = 1e-5  # Small value to avoid log(0)
 if not os.path.exists(processed_folder):
     os.makedirs(processed_folder)
 
-def encode_event(event_type, pitch, velocity, delta_log_time=None):
+def encode_event(event_type, pitch, velocity, time, delta_t=None):
     encoded_event_type = 0 if event_type == 'OFF' else 1 if velocity > velocity_threshold else 2
-    # Only include delta_log_time in the encoded event
+    # Assuming you want to include delta_t in the encoded event
     return [
         encoded_event_type,
         pitch,
-        velocity / 127,
-        delta_log_time if delta_log_time is not None else 0  # Use delta_log_time directly
+        velocity,
+        #np.log1p(time + epsilon),  # Added epsilon to avoid log(0)
+        delta_t if delta_t is not None else 0  # Handle delta_t similarly
     ]
+
 
 def log_event_distribution(events):
     event_counts = {'OFF': 0, 'ON_above_thresh': 0, 'ON_below_thresh': 0}
@@ -32,8 +34,9 @@ def log_event_distribution(events):
             event_counts['ON_above_thresh'] += 1
         else:
             event_counts['ON_below_thresh'] += 1
-    print(f"Event distribution - OFF: {event_counts['OFF']}, ON (above threshold): {event_counts['ON_above_thresh']}, ON (below threshold): {event_counts['ON_below_thresh']}")
+    #print(f"Event distribution - OFF: {event_counts['OFF']}, ON (above threshold): {event_counts['ON_above_thresh']}, ON (below threshold): {event_counts['ON_below_thresh']}")
 
+# We need both current time for organization as well as dT for training
 def process_file(midi_file):
     print("Processing file:", midi_file)
     path = os.path.join(raw_folder, midi_file)
@@ -56,13 +59,16 @@ def process_file(midi_file):
     # Sort events first by time and then by event type ('OFF' before 'ON')
     events.sort(key=lambda x: (x[0], x[1]))
 
-    # Calculate logged times and their differences
-    log_times = [np.log1p(event[0] + epsilon) for event in events]
-    delta_log_times = [log_times[i] - log_times[i-1] for i in range(1, len(log_times))]
-    delta_log_times.insert(0, 0)  # First event has no previous event
+    # Calculate delta time (time difference) after sorting
+    for i in range(1, len(events)):
+        delta_t = events[i][0] - events[i-1][0]
+        events[i] = events[i] + (delta_t,)
 
-    # Encode events using only delta_log_times and log their distribution
-    encoded_events = [encode_event('ON' if etype == 1 else 'OFF', note, velocity, delta_log_times[i]) for i, (_, etype, note, velocity) in enumerate(events)]
+    # Adding 0 as delta_t for the first event as there's no previous event
+    events[0] = events[0] + (0,)
+
+    # Encode events and log their distribution
+    encoded_events = [encode_event('ON' if etype == 1 else 'OFF', note, velocity, time, delta_t) for time, etype, note, velocity, delta_t in events]
     log_event_distribution(encoded_events)
 
     # Generate sequences and their next events
@@ -74,7 +80,8 @@ def process_file(midi_file):
     # Save sequences and their next events to a compressed file
     output_file = os.path.join(processed_folder, midi_file.replace('.mid', '').replace('.midi', '') + '_sequences.npz')
     np.savez_compressed(output_file, sequences=sequences, next_events=next_events)
-    print(f"Saved {len(sequences)} sequences and their next events to {output_file}.\n")
+    #print(f"Saved {len(sequences)} sequences and their next events to {output_file}.\n")
+
 
 if __name__ == '__main__':
     midi_files = [f for f in os.listdir(raw_folder) if f.endswith('.mid') or f.endswith('.midi')]

@@ -33,7 +33,7 @@ def build_multi_output_rnn_model(input_shape, num_units, dropout_rate, pitch_ran
     # Output layers with L2 regularization
     note_event_output = Dense(2, activation='softmax', name='note_event_output', kernel_regularizer=l2(0.01))(x)  # Added for note event (on/off)
     pitch_output = Dense(pitch_range, activation='softmax', name='pitch_output', kernel_regularizer=l2(0.01))(x)
-    velocity_output = Dense(1, activation='sigmoid', name='velocity_output', kernel_regularizer=l2(0.01))(x)  # Assumes velocity range is normalized between 0 and 1
+    velocity_output = Dense(velocity_range, activation='softmax', name='velocity_output', kernel_regularizer=l2(0.01))(x)
     time_delta_output = Dense(time_delta_range, activation='softmax', name='time_delta_output', kernel_regularizer=l2(0.01))(x)
 
     model = Model(inputs=inputs, outputs=[note_event_output, pitch_output, velocity_output, time_delta_output])
