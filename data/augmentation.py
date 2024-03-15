@@ -12,24 +12,27 @@ def transpose_sequence(sequence, semitone_shift):
             transposed_pitch = np.clip(pitch + semitone_shift, 0, 127)
         else:
             transposed_pitch = pitch
-        transposed_sequence.append([event_type, transposed_pitch, velocity, delta_t])
-    return transposed_sequence
+        # Ensure the result is an integer
+        transposed_sequence.append([int(event_type), int(transposed_pitch), int(velocity), int(delta_t)])
+    return np.array(transposed_sequence, dtype=int)
 
 def augment_sequence(sequence, factor):
     augmented_sequence = []
     for event in sequence:
         event_type, pitch, velocity, delta_t = event
         augmented_delta_t = delta_t * factor
-        augmented_sequence.append([event_type, pitch, velocity, augmented_delta_t])
-    return augmented_sequence
+        # Ensure the result is an integer
+        augmented_sequence.append([int(event_type), int(pitch), int(velocity), int(augmented_delta_t)])
+    return np.array(augmented_sequence, dtype=int)
 
 def diminish_sequence(sequence, factor):
     diminished_sequence = []
     for event in sequence:
         event_type, pitch, velocity, delta_t = event
         diminished_delta_t = delta_t / factor if factor != 0 else delta_t
-        diminished_sequence.append([event_type, pitch, velocity, diminished_delta_t])
-    return diminished_sequence
+        # Ensure the result is an integer, use round() before int() to handle division properly
+        diminished_sequence.append([int(event_type), int(pitch), int(velocity), int(round(diminished_delta_t))])
+    return np.array(diminished_sequence, dtype=int)
 
 
 def augment_data(file_path, semitone_shifts, time_factors):
@@ -39,30 +42,24 @@ def augment_data(file_path, semitone_shifts, time_factors):
 
     augmented_data = {}
 
+    # Label and store the original sequences for clarity
+    augmented_data['original'] = sequences
+
     # Transposition
     for shift in semitone_shifts:
-        augmented_sequences = []
-        for seq in sequences:
-            transposed_seq = transpose_sequence(seq, shift)
-            augmented_sequences.append(transposed_seq)
-        label = f"transposed_{shift}"  # Label indicating the transposition
+        augmented_sequences = [transpose_sequence(seq, shift) for seq in sequences]
+        label = f"transposed_{shift}"
         augmented_data[label] = np.array(augmented_sequences)
 
     # Time augmentation and diminution
     for factor in time_factors:
-        augmented_sequences = []
-        for seq in sequences:
-            if factor > 1:  # Augmentation
-                augmented_seq = augment_sequence(seq, factor)
-                augmented_sequences.append(augmented_seq)
-            elif factor < 1 and factor > 0:  # Diminution
-                diminished_seq = diminish_sequence(seq, factor)
-                augmented_sequences.append(diminished_seq)
-        label = "augmented" if factor > 1 else "diminished"  # Label indicating time change
+        augmented_sequences = [augment_sequence(seq, factor) for seq in sequences if factor > 1] + \
+                              [diminish_sequence(seq, factor) for seq in sequences if factor < 1 and factor > 0]
+        label = "augmented" if factor > 1 else "diminished"
         augmented_data[f"{label}_{factor}"] = np.array(augmented_sequences)
 
-    # Append augmented data with labels to the .npz file
-    np.savez_compressed(file_path, sequences=sequences, next_events=next_events, **augmented_data)
+    # Append augmented data with labels, including the original sequences, to the .npz file
+    np.savez_compressed(file_path, next_events=next_events, **augmented_data)
     print(f"Augmented data with labels appended to {file_path}")
 
 
