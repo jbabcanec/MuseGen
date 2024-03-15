@@ -1,0 +1,8 @@
+1. Human to readable to inspect your raw data going in
+2. midi to preprocess
+(check_npz if you want to ensure quality)
+3. augmentation
+(check_npz if you want to ensure quality)
+4. features
+(check_npz if you want to ensure quality)
+5. check ranges (can be used anywhere after 3, this will inform the trainer)

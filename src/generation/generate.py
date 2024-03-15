@@ -27,7 +27,7 @@ def softmax(x, temperature):
     return e_x / e_x.sum(axis=-1, keepdims=True)
 
 
-def generate_music(models, seed_sequence, num_generate=100, temperature=1000000, max_simultaneous_notes=8):
+def generate_music(models, seed_sequence, num_generate=100, temperature=0.001, max_simultaneous_notes=8):
     input_sequence = np.array(seed_sequence)
     generated_sequence = []
 
@@ -43,7 +43,7 @@ def generate_music(models, seed_sequence, num_generate=100, temperature=1000000,
             prediction = model.predict(np.expand_dims(input_sequence, axis=0))
             note_event_pred, pitch_pred, velocity_pred, event_time_pred = prediction
 
-            note_event_prob = softmax(note_event_pred[0], temperature=temperature)
+            note_event_prob = note_event_pred[0]
             pitch_prob = softmax(pitch_pred[0], temperature=temperature)
 
             note_event = np.random.choice(range(len(note_event_prob)), p=note_event_prob)
