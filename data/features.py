@@ -8,41 +8,37 @@ processed_folder = './processed'
 def extract_harmony_features(midi_path):
     score = converter.parse(midi_path)
     chords = score.chordify()
-    chord_progressions = [c.root().name for c in chords.recurse().getElementsByClass('Chord')]
-    return chord_progressions
+    chord_features = []
 
-def extract_rhythm_features(midi_path):
-    score = converter.parse(midi_path)
-    durations = [str(n.duration.quarterLength) for n in score.recurse().getElementsByClass(['Note', 'Rest'])]
-    return durations
+    for c in chords.recurse().getElementsByClass('Chord'):
+        # Extract the root note, chord quality, and inversion
+        root = c.root().name
+        quality = c.quality
+        inversion = c.inversion()
 
-def extract_melody_features(midi_path):
-    score = converter.parse(midi_path)
-    melody = score.parts[0].recurse().getElementsByClass('Note')
-    melody_sequence = [str(n.pitch.midi) for n in melody]
-    return melody_sequence
+        # Format the chord information. Example: "C_major_inv1" for C major chord in first inversion
+        chord_info = f"{root}_{quality}_inv{inversion}"
+        chord_features.append(chord_info)
+
+    return chord_features
 
 def append_features_to_npz(midi_file, npz_file):
-    # Extract features from the MIDI file in the 'raw' folder
     harmony_features = extract_harmony_features(midi_file)
-    rhythm_features = extract_rhythm_features(midi_file)
-    melody_features = extract_melody_features(midi_file)
 
-    # Load existing data from the .npz file in the 'processed' folder, which includes augmented data
     with np.load(npz_file, allow_pickle=True) as data:
-        # Retain all existing data
         existing_data = {key: data[key] for key in data.files}
 
-    # Append the extracted features to the existing data
+    # Check if 'features' already exists and log a message
+    if 'features' in existing_data:
+        print(f"'features' section already exists in {npz_file} and will be overwritten.")
+
     existing_data['features'] = {
         "harmony": harmony_features,
-        "rhythm": rhythm_features,
-        "melody": melody_features
     }
 
-    # Save all the data back to the .npz file, preserving augmented data
     np.savez_compressed(npz_file, **existing_data)
-    print(f"Features appended to {npz_file}")
+    print(f"Features appended/updated in {npz_file}")
+
 
 if __name__ == '__main__':
     for midi_file in os.listdir(raw_folder):

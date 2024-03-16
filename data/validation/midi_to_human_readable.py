@@ -2,6 +2,16 @@ import os
 import mido
 from pretty_midi import note_number_to_name
 
+# Get the directory where this script is located
+current_dir = os.path.dirname(__file__)
+
+# Go up one directory from the current script's location
+base_dir = os.path.join(current_dir, os.pardir)
+
+# Define the raw and readable folders relative to the base directory
+raw_directory = os.path.join(base_dir, 'raw')  # Path to the directory containing raw MIDI files
+readable_directory = os.path.join(base_dir, 'readable')  # Directory to save readable output files
+
 def read_midi(file_path, output_file):
     midi_data = mido.MidiFile(file_path)
 
@@ -32,8 +42,6 @@ def process_all_midi_files(raw_dir, output_dir):
             read_midi(file_path, output_file)
 
 if __name__ == "__main__":
-    raw_directory = './raw'  # Path to the directory containing raw MIDI files
-    readable_directory = './readable'  # Directory to save readable output files
     if not os.path.exists(readable_directory):
         os.makedirs(readable_directory)
     process_all_midi_files(raw_directory, readable_directory)

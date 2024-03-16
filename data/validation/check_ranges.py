@@ -1,7 +1,14 @@
 import numpy as np
 import os
 
-processed_folder = './processed'
+# Get the directory where this script is located
+current_dir = os.path.dirname(__file__)
+
+# Go up one directory from the current script's location
+base_dir = os.path.join(current_dir, os.pardir)
+
+# Define the processed folder relative to the base directory
+processed_folder = os.path.join(base_dir, 'processed')
 
 def analyze_ranges(npz_file):
     with np.load(npz_file, allow_pickle=True) as data:
