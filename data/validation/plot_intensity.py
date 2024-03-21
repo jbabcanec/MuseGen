@@ -3,6 +3,12 @@ import random
 import mido
 import matplotlib.pyplot as plt
 import numpy as np
+import concurrent.futures
+from scipy.interpolate import UnivariateSpline
+
+#------------------------------------------------------------
+# Preprocessing 
+#------------------------------------------------------------
 
 def select_midi_files(midi_files, midi_num):
     if midi_num == 'all':
@@ -18,6 +24,10 @@ def combine_tracks(midi_file):
     new_mid = mido.MidiFile()  # Create a new MidiFile
     new_mid.tracks.append(combined)  # Append the combined track
     return new_mid
+
+#------------------------------------------------------------
+# Profiles
+#------------------------------------------------------------
 
 def velocity_profile(mid_file):
     velocities = []  # List to store the velocity of each note-on event
@@ -94,16 +104,45 @@ def tempo_profile(mid_file):
 
     return tempo_changes
 
+
+#------------------------------------------------------------
+# Prepare Output
+#------------------------------------------------------------
+
 def plot_profile(combined_profile, title='Combined Intensity Profile'):
     plt.figure(figsize=(10, 6))
-    plt.plot(combined_profile, label='Intensity')
+    
+    # Original intensity profile
+    plt.plot(combined_profile, label='Intensity', alpha=0.5)  # Reduced alpha to make spline more visible
+
+    # Spline of best fit
+    x = np.arange(len(combined_profile))
+    spline = UnivariateSpline(x, combined_profile, s=len(combined_profile))  # s is a smoothing factor
+    xs = np.linspace(0, len(combined_profile)-1, 1000)  # More points for a smoother spline curve
+    ys = spline(xs)
+    plt.plot(xs, ys, label='Spline of Best Fit', color='green')
+
+    # Find the index of the maximum intensity value
+    max_intensity_index = combined_profile.index(max(combined_profile))
+    total_length = len(combined_profile)
+    ratio = max_intensity_index / total_length
+
+    # Draw a vertical line at the index of the maximum intensity
+    plt.axvline(x=max_intensity_index, color='r', linestyle='--', label=f'Max Intensity (Ratio: {ratio:.3f})')
+
+    # Annotate the plot with the ratio
+    plt.annotate(f'Ratio: {ratio:.3f}', xy=(max_intensity_index, max(combined_profile)),
+                 xytext=(max_intensity_index + 0.05 * total_length, max(combined_profile)),
+                 arrowprops=dict(facecolor='black', shrink=0.05))
+
     plt.title(title)
-    plt.xlabel('Time (MIDI ticks)')
+    plt.xlabel('Time (Normalized)')
     plt.ylabel('Intensity (Normalized)')
     plt.legend()
     plt.grid(True)
     plt.show()
 
+    
 def normalize_profile(profile):
     if not profile:
         return []
@@ -123,12 +162,27 @@ def combine_profiles(*profiles, weights=None):
     return combined_profile
 
 def build_combined_profile(mid_file, weights=None):
+    if weights is None:
+        #defaults
+        weights = {
+            'velocity': 0.25,
+            'pitch_density': 0.25,
+            'tension': 0.25,
+            'tempo': 0.25
+        }
+
     velocity_prof = normalize_profile(velocity_profile(mid_file))
     pitch_density_prof = normalize_profile(pitch_density_profile(mid_file))
     tension_prof = normalize_profile(tension_profile(mid_file))
     tempo_prof = normalize_profile(tempo_profile(mid_file))
 
-    combined_prof = combine_profiles(velocity_prof, pitch_density_prof, tension_prof, tempo_prof, weights=weights)
+    combined_prof = combine_profiles(
+        velocity_prof,
+        pitch_density_prof,
+        tension_prof,
+        tempo_prof,
+        weights=[weights['velocity'], weights['pitch_density'], weights['tension'], weights['tempo']]
+    )
     return combined_prof
 
 def interpolate_profile(profile, target_length):
@@ -146,23 +200,39 @@ def average_profiles(profiles):
     averaged_profile = np.mean(interpolated_profiles, axis=0).tolist()
     return averaged_profile
 
+def process_midi_file(midi_file, weights):
+    combined_mid = combine_tracks(midi_file)
+    combined_prof = build_combined_profile(combined_mid, weights=weights)
+    return combined_prof
+
 if __name__ == '__main__':
     current_dir = os.path.dirname(os.path.abspath(__file__))
     base_dir = os.path.join(current_dir, os.pardir)
     raw_folder = os.path.join(base_dir, 'raw')
     midi_files = [os.path.join(raw_folder, f) for f in os.listdir(raw_folder) if f.endswith('.mid')]
 
-    # Set midi_num to 'all' or a specific number as needed
-    midi_num = 'all'
+    midi_num = 'all'  # Adjust as needed
     selected_midi_files = select_midi_files(midi_files, midi_num)
 
     all_profiles = []
+    weights = {
+        'velocity': 0.4,  # Weight for velocity profile
+        'pitch_density': 0.3,  # Weight for pitch density profile
+        'tension': 0.20,  # Weight for tension profile
+        'tempo': 0.1  # Weight for tempo profile
+    }
 
-    for midi_file in selected_midi_files:
-        combined_mid = combine_tracks(midi_file)
-        weights = [0.25, 0.25, 0.25, 0.25]  # Define your weights here
-        combined_prof = build_combined_profile(combined_mid, weights=weights)
-        all_profiles.append(combined_prof)
+    # Use ThreadPoolExecutor to process MIDI files in parallel
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        future_to_midi = {executor.submit(process_midi_file, midi_file, weights): midi_file for midi_file in selected_midi_files}
+        for future in concurrent.futures.as_completed(future_to_midi):
+            midi_file = future_to_midi[future]
+            try:
+                combined_prof = future.result()
+                all_profiles.append(combined_prof)
+            except Exception as exc:
+                print(f'{midi_file} generated an exception: {exc}')
 
     averaged_profile = average_profiles(all_profiles)
     plot_profile(averaged_profile, title='Averaged Combined Profile for Selected MIDI Files')
+

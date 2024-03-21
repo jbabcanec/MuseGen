@@ -7,10 +7,16 @@ This project aims to generate music using a deep learning model trained on MIDI 
 The project is structured into several key scripts:
 
 - `midi_to_preprocess.py`: Converts raw MIDI files into a processed format suitable for training, including encoding of MIDI events and creating training sequences.
-- `midi_to_human_readable.py`: Converts MIDI files into a human-readable format for debugging and understanding the MIDI data structure.
+- `augmentation.py`: Augments data to desired augmentation or dimunition to artificially increase training set
+- `features.py`: Extracts features and appends them to .npz files. These features include harmony and intensity profile. More may be added.
+- `validations/midi_to_human_readable.py`: Converts MIDI files into a human-readable format for debugging and understanding the MIDI data structure.
+- `validations/check_npz.py`: Converts chosen .npz file into text files for debugging.
+- `validations/intensity_profile.py`: Examines intensity of piece(s) as a function of velocity, tempo, tension, and pitch aggregation. For research purposes.
 - `train_model.py`: Trains a multi-output RNN model on the processed MIDI data, capable of predicting pitch, velocity, and time delta for the next event in a sequence.
 - `rnn_model.py`: Defines the RNN model architecture used for training in `train_model.py`.
 - `generate.py`: Uses the trained model(s) to generate new music sequences based on a random seed or a given input sequence.
+- `rules/...`: These are "dissolvable" rules which aid music generation. They are dissolvable because they will eventually not be invoked as training improves.
+- `seeds/...`: These are different starting sequences that can be invoked.
 - `midi_conversion.py`: Converts the generated music sequences back into MIDI format, ready for playback.
 
 ## Prerequisites
@@ -39,6 +45,13 @@ The project is structured into several key scripts:
 
     ```
     python midi_to_preprocess.py
+    ```
+
+3. Run additional preprocessing such as `augmentation.py` and `features.py`:
+
+    ```
+    python augmentation.py
+    python features.py
     ```
 
 ### Training the Model
