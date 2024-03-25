@@ -205,34 +205,48 @@ def process_midi_file(midi_file, weights):
     combined_prof = build_combined_profile(combined_mid, weights=weights)
     return combined_prof
 
-if __name__ == '__main__':
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    base_dir = os.path.join(current_dir, os.pardir)
-    raw_folder = os.path.join(base_dir, 'raw')
-    midi_files = [os.path.join(raw_folder, f) for f in os.listdir(raw_folder) if f.endswith('.mid')]
 
-    midi_num = 'all'  # Adjust as needed
-    selected_midi_files = select_midi_files(midi_files, midi_num)
+def get_intensity_profile(midi_file, weights=None):
+    if weights is None:
+        # Define default weights if none are provided
+        weights = {
+            'velocity': 0.4, 
+            'pitch_density': 0.3, 
+            'tension': 0.2, 
+            'tempo': 0.1
+        }
+    combined_mid = combine_tracks(midi_file)
+    combined_prof = build_combined_profile(combined_mid, weights=weights)
+    return combined_prof
 
-    all_profiles = []
-    weights = {
-        'velocity': 0.4,  # Weight for velocity profile
-        'pitch_density': 0.3,  # Weight for pitch density profile
-        'tension': 0.20,  # Weight for tension profile
-        'tempo': 0.1  # Weight for tempo profile
-    }
+# if __name__ == '__main__':
+#     current_dir = os.path.dirname(os.path.abspath(__file__))
+#     base_dir = os.path.join(current_dir, os.pardir)
+#     raw_folder = os.path.join(base_dir, 'raw')
+#     midi_files = [os.path.join(raw_folder, f) for f in os.listdir(raw_folder) if f.endswith('.mid')]
 
-    # Use ThreadPoolExecutor to process MIDI files in parallel
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        future_to_midi = {executor.submit(process_midi_file, midi_file, weights): midi_file for midi_file in selected_midi_files}
-        for future in concurrent.futures.as_completed(future_to_midi):
-            midi_file = future_to_midi[future]
-            try:
-                combined_prof = future.result()
-                all_profiles.append(combined_prof)
-            except Exception as exc:
-                print(f'{midi_file} generated an exception: {exc}')
+#     midi_num = 'all'  # Adjust as needed
+#     selected_midi_files = select_midi_files(midi_files, midi_num)
 
-    averaged_profile = average_profiles(all_profiles)
-    plot_profile(averaged_profile, title='Averaged Combined Profile for Selected MIDI Files')
+#     all_profiles = []
+#     weights = {
+#         'velocity': 0.4,  # Weight for velocity profile
+#         'pitch_density': 0.3,  # Weight for pitch density profile
+#         'tension': 0.20,  # Weight for tension profile
+#         'tempo': 0.1  # Weight for tempo profile
+#     }
+
+#     # Use ThreadPoolExecutor to process MIDI files in parallel
+#     with concurrent.futures.ThreadPoolExecutor() as executor:
+#         future_to_midi = {executor.submit(process_midi_file, midi_file, weights): midi_file for midi_file in selected_midi_files}
+#         for future in concurrent.futures.as_completed(future_to_midi):
+#             midi_file = future_to_midi[future]
+#             try:
+#                 combined_prof = future.result()
+#                 all_profiles.append(combined_prof)
+#             except Exception as exc:
+#                 print(f'{midi_file} generated an exception: {exc}')
+
+#     averaged_profile = average_profiles(all_profiles)
+#     plot_profile(averaged_profile, title='Averaged Combined Profile for Selected MIDI Files')
 

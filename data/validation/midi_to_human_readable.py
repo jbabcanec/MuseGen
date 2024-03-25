@@ -38,4 +38,10 @@ def process_all_midi_files(raw_dir, output_dir):
     for file in os.listdir(raw_dir):
         if file.endswith('.midi') or file.endswith('.mid'):
             file_path = os.path.join(raw_dir, file)
-        
+            output_file = os.path.join(output_dir, os.path.splitext(file)[0] + '.txt')
+            read_midi(file_path, output_file)
+
+if __name__ == "__main__":
+    if not os.path.exists(readable_directory):
+        os.makedirs(readable_directory)
+    process_all_midi_files(raw_directory, readable_directory)
