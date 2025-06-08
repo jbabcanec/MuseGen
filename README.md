@@ -12,8 +12,9 @@ The project is structured into several key scripts:
 - `validations/midi_to_human_readable.py`: Converts MIDI files into a human-readable format for debugging and understanding the MIDI data structure.
 - `validations/check_npz.py`: Converts chosen .npz file into text files for debugging.
 - `validations/intensity_profile.py`: Examines intensity of piece(s) as a function of velocity, tempo, tension, and pitch aggregation. For research purposes.
-- `train_model.py`: Trains a multi-output RNN model on the processed MIDI data, capable of predicting pitch, velocity, and time delta for the next event in a sequence.
-- `rnn_model.py`: Defines the RNN model architecture used for training in `train_model.py`.
+- `train_model.py`: Trains either an RNN or Transformer model on the processed MIDI data, capable of predicting pitch, velocity, and time delta for the next event in a sequence.
+- `rnn_model.py`: Defines the GRU-based architecture.
+- `transformer_model.py`: Provides a Transformer architecture for advanced training.
 - `generate.py`: Uses the trained model(s) to generate new music sequences based on a random seed or a given input sequence.
 - `rules/...`: These are "dissolvable" rules which aid music generation. They are dissolvable because they will eventually not be invoked as training improves.
 - `seeds/...`: These are different starting sequences that can be invoked.
@@ -58,10 +59,15 @@ The project is structured into several key scripts:
 
 ### Training the Model
 
-1. After preprocessing, use `train_model.py` to train the RNN model:
+1. After preprocessing, use `train_model.py` to train a model. The script now
+   supports an optional Transformer architecture:
 
     ```
+    # Train GRU-based model
     python train_model.py
+
+    # Train Transformer model
+    python train_model.py --model_type transformer
     ```
 
 2. Trained models are saved in the `./outputs/models` directory.
