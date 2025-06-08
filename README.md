@@ -7,7 +7,7 @@ This project aims to generate music using a deep learning model trained on MIDI 
 The project is structured into several key scripts:
 
 - `midi_to_preprocess.py`: Converts raw MIDI files into a processed format suitable for training, including encoding of MIDI events and creating training sequences.
-- `augmentation.py`: Augments data to desired augmentation or dimunition to artificially increase training set
+- `augmentation.py`: Provides transposition, time stretching, velocity scaling, and optional intensity based augmentation to artificially increase the training set
 - `features.py`: Extracts features and appends them to .npz files. These features include harmony and intensity profile. More may be added.
 - `validations/midi_to_human_readable.py`: Converts MIDI files into a human-readable format for debugging and understanding the MIDI data structure.
 - `validations/check_npz.py`: Converts chosen .npz file into text files for debugging.
@@ -47,7 +47,9 @@ The project is structured into several key scripts:
     python midi_to_preprocess.py
     ```
 
-3. Run additional preprocessing such as `augmentation.py` and `features.py`:
+3. Run additional preprocessing such as `augmentation.py` and `features.py`.
+   The augmentation script now supports velocity scaling and applying the
+   intensity profile of the original MIDI when available:
 
     ```
     python augmentation.py
