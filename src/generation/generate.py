@@ -45,11 +45,11 @@ def generate_music(models, seed_sequence, num_generate=100, temperature=0.001, m
 
             note_event_prob = note_event_pred[0]
             pitch_prob = softmax(pitch_pred[0], temperature=temperature)
+            velocity_prob = softmax(velocity_pred[0], temperature=temperature)
 
             note_event = np.random.choice(range(len(note_event_prob)), p=note_event_prob)
             pitch = np.random.choice(range(len(pitch_prob)), p=pitch_prob)
-
-            best_velocity = velocity_pred[0][0] * 127
+            velocity = np.random.choice(range(len(velocity_prob)), p=velocity_prob)
 
             # Calculate the delta time for the event and add it to the cumulative time
             event_time_delta = event_time_pred[0].dot(np.arange(event_time_pred.shape[1]))
@@ -62,11 +62,11 @@ def generate_music(models, seed_sequence, num_generate=100, temperature=0.001, m
             if note_off_event:
                 generated_sequence.append(note_off_event)  # Add note-off event if returned
 
-            next_event = [note_event, pitch, best_velocity, cumulative_event_time]
+            next_event = [note_event, pitch, velocity, cumulative_event_time]
             generated_sequence.append(next_event)
             input_sequence = np.vstack([input_sequence[1:], next_event])
 
-            print(f"Selected for event {i+1}: Note Event {note_event}, Pitch {pitch}, Velocity (scaled) {best_velocity:.2f}, Event Time {cumulative_event_time}")
+            print(f"Selected for event {i+1}: Note Event {note_event}, Pitch {pitch}, Velocity {velocity}, Event Time {cumulative_event_time}")
             print("------")
 
     # Filter out invalid note-off events
