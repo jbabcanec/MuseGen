@@ -27,7 +27,37 @@ def softmax(x, temperature):
     return e_x / e_x.sum(axis=-1, keepdims=True)
 
 
-def generate_music(models, seed_sequence, num_generate=100, temperature=0.001, max_simultaneous_notes=8):
+def sample_distribution(probabilities, temperature=1.0, top_k=None, allowed_indices=None):
+    """Sample an index from a probability distribution with optional constraints."""
+    probs = np.log(probabilities + 1e-8) / temperature
+    probs = np.exp(probs)
+    probs /= np.sum(probs)
+    indices = np.arange(len(probabilities))
+
+    if allowed_indices is not None:
+        indices = np.array(allowed_indices)
+        probs = probs[indices]
+        probs /= np.sum(probs)
+
+    if top_k is not None and top_k < len(indices):
+        top_k_idx = np.argsort(probs)[-top_k:]
+        indices = indices[top_k_idx]
+        probs = probs[top_k_idx]
+        probs /= np.sum(probs)
+
+    return np.random.choice(indices, p=probs)
+
+
+def generate_music(
+    models,
+    seed_sequence,
+    num_generate=100,
+    temperature=1.0,
+    max_simultaneous_notes=8,
+    pitch_low=21,
+    pitch_high=108,
+    top_k_pitch=8,
+):
     input_sequence = np.array(seed_sequence)
     generated_sequence = []
 
@@ -44,29 +74,40 @@ def generate_music(models, seed_sequence, num_generate=100, temperature=0.001, m
             note_event_pred, pitch_pred, velocity_pred, event_time_pred = prediction
 
             note_event_prob = note_event_pred[0]
-            pitch_prob = softmax(pitch_pred[0], temperature=temperature)
+            pitch_prob = pitch_pred[0]
 
-            note_event = np.random.choice(range(len(note_event_prob)), p=note_event_prob)
-            pitch = np.random.choice(range(len(pitch_prob)), p=pitch_prob)
+            note_event = sample_distribution(note_event_prob, temperature=temperature)
+            pitch = sample_distribution(
+                pitch_prob,
+                temperature=temperature,
+                top_k=top_k_pitch,
+                allowed_indices=range(pitch_low, pitch_high + 1),
+            )
 
-            best_velocity = velocity_pred[0][0] * 127
+            velocity = sample_distribution(velocity_pred[0], temperature=temperature)
 
             # Calculate the delta time for the event and add it to the cumulative time
-            event_time_delta = event_time_pred[0].dot(np.arange(event_time_pred.shape[1]))
+            event_time_delta = sample_distribution(event_time_pred[0], temperature=temperature)
             cumulative_event_time += event_time_delta
 
             unresolved_note_ons, note_off_event = avoid_accumulation(
-                unresolved_note_ons, note_event, pitch, max_simultaneous_notes, cumulative_event_time
+                unresolved_note_ons,
+                note_event,
+                pitch,
+                max_simultaneous_notes,
+                cumulative_event_time,
             )
 
             if note_off_event:
                 generated_sequence.append(note_off_event)  # Add note-off event if returned
 
-            next_event = [note_event, pitch, best_velocity, cumulative_event_time]
+            next_event = [note_event, pitch, velocity, cumulative_event_time]
             generated_sequence.append(next_event)
             input_sequence = np.vstack([input_sequence[1:], next_event])
 
-            print(f"Selected for event {i+1}: Note Event {note_event}, Pitch {pitch}, Velocity (scaled) {best_velocity:.2f}, Event Time {cumulative_event_time}")
+            print(
+                f"Selected for event {i+1}: Note Event {note_event}, Pitch {pitch}, Velocity {velocity}, Event Time {cumulative_event_time}"
+            )
             print("------")
 
     # Filter out invalid note-off events
@@ -91,7 +132,15 @@ print(seed_sequence)
 models = [load_model(model_path) for model_path in models_dir.glob('*.h5')]
 
 # Generate a sequence of musical events using the ensemble of models
-generated_sequence = generate_music(models, seed_sequence, num_generate=100)
+generated_sequence = generate_music(
+    models,
+    seed_sequence,
+    num_generate=100,
+    temperature=0.9,
+    pitch_low=36,
+    pitch_high=96,
+    top_k_pitch=12,
+)
 
 print(generated_sequence)
 

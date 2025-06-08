@@ -1,4 +1,5 @@
 import sys
+import argparse
 import numpy as np
 from pathlib import Path
 from tensorflow.keras.utils import to_categorical
@@ -13,6 +14,7 @@ sys.path.append(str(src_dir))
 
 # Import the multi-output RNN model builder function
 from models.rnn_model import build_multi_output_rnn_model
+from models.transformer_model import build_transformer_model
 
 # Define paths relative to project root
 data_processed_dir = project_root / 'data/processed'
@@ -35,6 +37,16 @@ validation_split = 0.2
 early_stopping_patience = 10
 num_units=64
 dropout_rate=0.3
+
+# Parse command line arguments
+parser = argparse.ArgumentParser(description="Train music generation model")
+parser.add_argument(
+    "--model_type",
+    choices=["rnn", "transformer"],
+    default="rnn",
+    help="Choose underlying architecture",
+)
+args = parser.parse_args()
 
 # Initialize the EarlyStopping callback
 early_stopping = EarlyStopping(
@@ -80,12 +92,22 @@ def process_and_train(npz_file, model=None):
     if model is None:
         print("Initializing new model.")
         sequence_length, num_features = X.shape[1], X.shape[2]
-        model = build_multi_output_rnn_model((sequence_length, num_features),
-                                             num_units=num_units,
-                                             dropout_rate=dropout_rate,
-                                             pitch_range=FIXED_PITCH_RANGE,
-                                             velocity_range=FIXED_VELOCITY_RANGE,
-                                             time_delta_range=FIXED_TIME_DELTA_RANGE)
+        if args.model_type == "transformer":
+            model = build_transformer_model(
+                (sequence_length, num_features),
+                pitch_range=FIXED_PITCH_RANGE,
+                velocity_range=FIXED_VELOCITY_RANGE,
+                time_delta_range=FIXED_TIME_DELTA_RANGE,
+            )
+        else:
+            model = build_multi_output_rnn_model(
+                (sequence_length, num_features),
+                num_units=num_units,
+                dropout_rate=dropout_rate,
+                pitch_range=FIXED_PITCH_RANGE,
+                velocity_range=FIXED_VELOCITY_RANGE,
+                time_delta_range=FIXED_TIME_DELTA_RANGE,
+            )
 
         model.compile(optimizer='adam',
                       loss={'note_event_output': 'categorical_crossentropy',
