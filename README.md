@@ -12,6 +12,7 @@ The project is structured into several key scripts:
 - `validations/midi_to_human_readable.py`: Converts MIDI files into a human-readable format for debugging and understanding the MIDI data structure.
 - `validations/check_npz.py`: Converts chosen .npz file into text files for debugging.
 - `validations/intensity_profile.py`: Examines intensity of piece(s) as a function of velocity, tempo, tension, and pitch aggregation. For research purposes.
+- `validations/dataset_statistics.py`: Aggregates pitch, velocity, and time delta distributions across processed files to guide further modeling research.
 - `train_model.py`: Trains either an RNN or Transformer model on the processed MIDI data, capable of predicting pitch, velocity, and time delta for the next event in a sequence.
 - `rnn_model.py`: Defines the GRU-based architecture.
 - `transformer_model.py`: Provides a Transformer architecture for advanced training.
