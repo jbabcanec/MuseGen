@@ -1,3 +1,4 @@
+import argparse
 import numpy as np
 import random
 import tensorflow as tf
@@ -115,65 +116,73 @@ def generate_music(
 
     return final_sequence
 
-# Initialize the seed sequence with randomness
-# -----------------------------------------------------------------------------
-# most_likely_first_pitch = 60  # Replace with the actual value determined from your dataset
-# seed_sequence = generate_random_seed(most_likely_first_pitch=most_likely_first_pitch)
+def parse_args() -> argparse.Namespace:
+    """Return command line arguments."""
+    parser = argparse.ArgumentParser(description="Generate music using trained models")
+    parser.add_argument("--models-dir", type=str, default=str(models_dir), help="Directory containing .h5 model files")
+    parser.add_argument("--sample-dir", type=str, default=str(sample_dir), help="Directory of processed .npz files for seeding")
+    parser.add_argument("--output", type=str, default=str(generated_music_dir / "generated_output.midi"), help="Path for the generated MIDI file")
+    parser.add_argument("--num-generate", type=int, default=100, help="Number of events to generate")
+    parser.add_argument("--temperature", type=float, default=0.9, help="Sampling temperature")
+    parser.add_argument("--pitch-low", type=int, default=36, help="Lowest allowed pitch")
+    parser.add_argument("--pitch-high", type=int, default=96, help="Highest allowed pitch")
+    parser.add_argument("--top-k-pitch", type=int, default=12, help="Limit pitch sampling to top-k values")
+    parser.add_argument("--random-seed", action="store_true", help="Use a completely random seed sequence")
+    parser.add_argument("--sequence-length", type=int, default=100, help="Length of the seed sequence")
+    parser.add_argument("--first-pitch", type=int, default=60, help="Most likely first pitch when using a random seed")
+    return parser.parse_args()
 
-# Initialize the seed sequence with sample from processed .npz file
-# -----------------------------------------------------------------------------
-seed_sequence = load_random_seed(sample_dir)
 
-print(seed_sequence)
+def main() -> None:
+    args = parse_args()
+
+    models_path = Path(args.models_dir)
+    sample_path = Path(args.sample_dir)
+    output_path = Path(args.output)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    if args.random_seed:
+        seed_sequence = generate_random_seed(
+            sequence_length=args.sequence_length,
+            most_likely_first_pitch=args.first_pitch,
+        )
+    else:
+        seed_sequence = load_random_seed(sample_path, sequence_length=args.sequence_length)
+
+    print(seed_sequence)
+
+    models = [load_model(path) for path in models_path.glob("*.h5")]
+    if not models:
+        raise ValueError(f"No models found in {models_path}")
+
+    generated_sequence = generate_music(
+        models,
+        seed_sequence,
+        num_generate=args.num_generate,
+        temperature=args.temperature,
+        pitch_low=args.pitch_low,
+        pitch_high=args.pitch_high,
+        top_k_pitch=args.top_k_pitch,
+    )
+
+    convert_to_midi(generated_sequence, output_path)
+    print(f"Generated music saved to {output_path}")
+
+    output_text_path = output_path.with_suffix(".txt")
+    with open(output_text_path, "w") as file:
+        file.write("[[")
+        for i, event in enumerate(generated_sequence):
+            note_event, pitch, velocity, current_time = event
+            event_str = f"  [{note_event:.0f} {pitch:.0f} {velocity:.8f} {current_time:.8f}]"
+            if i < len(generated_sequence) - 1:
+                event_str += ","
+            file.write(event_str)
+            if (i + 1) % 4 == 0:
+                file.write("\n")
+        file.write("]]")
+    print(f"Generated sequence details saved to {output_text_path}")
 
 
-
-# Load all models into a list
-models = [load_model(model_path) for model_path in models_dir.glob('*.h5')]
-
-# Generate a sequence of musical events using the ensemble of models
-generated_sequence = generate_music(
-    models,
-    seed_sequence,
-    num_generate=100,
-    temperature=0.9,
-    pitch_low=36,
-    pitch_high=96,
-    top_k_pitch=12,
-)
-
-print(generated_sequence)
-
-# Convert the generated sequence to MIDI format and save
-output_path = generated_music_dir / 'generated_ensemble_output.midi'
-convert_to_midi(generated_sequence, output_path)
-
-print(f"Generated music saved to {output_path}")
-
-output_text_path = output_path.with_suffix('.txt')  # Change the extension of the MIDI file path to .txt for the log file
-
-with open(output_text_path, "w") as file:
-    file.write("[[")  # Start of the outer list
-    
-    for i, event in enumerate(generated_sequence):
-        note_event, pitch, normalized_velocity, current_time = event
-        velocity = normalized_velocity  # Rescale the normalized velocity back to MIDI standards
-        
-        # Format the event as a list and remove the brackets to match your desired format
-        event_str = f"  [{note_event:.0f} {pitch:.0f} {velocity:.8f} {current_time:.8f}]"
-        
-        # Add a comma after each event except the last one
-        if i < len(generated_sequence) - 1:
-            event_str += ","
-        
-        file.write(event_str)
-        
-        # Add a newline every 4 events for better readability, similar to your example
-        if (i + 1) % 4 == 0:
-            file.write("\n")
-    
-    file.write("]]")  # End of the outer list
-
-print(f"Generated sequence details saved to {output_text_path}")
-
+if __name__ == "__main__":
+    main()
 
