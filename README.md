@@ -75,13 +75,15 @@ The project is structured into several key scripts:
 
 ### Generating Music
 
-1. Use `generate.py` to generate new music sequences with the trained model:
+Run `generate.py` to create new music using your trained models. The script now
+supports command-line options for customizing generation:
 
-    ```
-    python generate.py
-    ```
+```bash
+python src/generation/generate.py --num-generate 200 --temperature 1.0 \
+    --output outputs/generated_music/my_song.midi
+```
 
-2. Generated MIDI files are saved in the `./outputs/generated_music` directory.
+Generated MIDI files are saved to `./outputs/generated_music` by default.
 
 ### Converting MIDI to Human-Readable Format
 
@@ -94,7 +96,7 @@ The project is structured into several key scripts:
 ## Customization
 
 - You can adjust model parameters, sequence length, and other configurations by modifying the respective scripts.
-- The generation script (`generate.py`) allows for customization of the seed sequence, number of generated events, and ensemble model usage.
+- The generation script (`generate.py`) now accepts command-line arguments so you can tweak the seed source, number of generated events, and other parameters without modifying the code.
 
 ## License
 
