@@ -2,7 +2,7 @@ import sys
 import argparse
 import numpy as np
 from pathlib import Path
-from tensorflow.keras.utils import to_categorical
+import tensorflow as tf
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.models import load_model
 
@@ -57,79 +57,51 @@ early_stopping = EarlyStopping(
     restore_best_weights=True
 )
 
-# Function to process and train model per npz file
-def process_and_train(npz_file, model=None):
-    print(f"Processing file: {npz_file.name}")
+def load_file(npz_path):
+    """Return sequences and next events from an ``npz`` file."""
+    with np.load(npz_path, allow_pickle=True) as data:
+        return data['sequences'], data['next_events']
 
-    # Load data
-    with np.load(npz_file, allow_pickle=True) as data:
-        sequences = data['sequences']  # Adjust key if necessary
-        next_events = data['next_events']  # Adjust key if necessary
 
-    # Prepare data for training
-    note_events = next_events[:, 0]  # Assuming note event is the first element
-    
-    invalid_events = [(i, event) for i, event in enumerate(note_events) if event not in [0, 1]]
-    if invalid_events:
-        print(f"Skipping {npz_file.name} due to invalid note event values:")
-        for i, event in invalid_events:
-            print(f"  Invalid value {event} at event number {i}")
+def build_dataset(npz_files):
+    """Create a ``tf.data.Dataset`` streaming samples from all ``npz`` files."""
+    file_contents = []
+    sample_shape = None
+    total_samples = 0
 
-        with open(log_file_path, 'a') as log_file:
-            log_file.write(f"Skipped {npz_file.name} due to invalid note event values: {[event for _, event in invalid_events]}\n")
-        return model  # Skip the rest of the function
+    for path in npz_files:
+        seq, nxt = load_file(path)
+        if sample_shape is None:
+            sample_shape = seq.shape[1:]
+        file_contents.append((seq, nxt))
+        total_samples += seq.shape[0]
 
-    pitches = next_events[:, 1]  # Assuming pitch is the second element
-    velocities = next_events[:, 2]  # Assuming velocity is the third element
-    time_deltas = next_events[:, 3]  # Assuming time_delta is the fourth element
+    def generator():
+        for seq, nxt in file_contents:
+            for s, n in zip(seq, nxt):
+                yield s.astype(np.float32), n.astype(np.int32)
 
-    X = sequences
-    y_note_event = to_categorical(note_events, num_classes=2)  # Note on/off
-    y_pitch = to_categorical(pitches, num_classes=FIXED_PITCH_RANGE)
-    y_velocity =to_categorical(velocities, num_classes=FIXED_VELOCITY_RANGE)
-    y_time_delta = to_categorical(time_deltas, num_classes=FIXED_TIME_DELTA_RANGE)
+    dataset = tf.data.Dataset.from_generator(
+        generator,
+        output_signature=(
+            tf.TensorSpec(shape=sample_shape, dtype=tf.float32),
+            tf.TensorSpec(shape=(4,), dtype=tf.int32),
+        ),
+    )
 
-    if model is None:
-        print("Initializing new model.")
-        sequence_length, num_features = X.shape[1], X.shape[2]
-        if args.model_type == "transformer":
-            model = build_transformer_model(
-                (sequence_length, num_features),
-                pitch_range=FIXED_PITCH_RANGE,
-                velocity_range=FIXED_VELOCITY_RANGE,
-                time_delta_range=FIXED_TIME_DELTA_RANGE,
-            )
-        else:
-            model = build_multi_output_rnn_model(
-                (sequence_length, num_features),
-                num_units=num_units,
-                dropout_rate=dropout_rate,
-                pitch_range=FIXED_PITCH_RANGE,
-                velocity_range=FIXED_VELOCITY_RANGE,
-                time_delta_range=FIXED_TIME_DELTA_RANGE,
-            )
+    dataset = dataset.map(
+        lambda seq, evt: (
+            seq,
+            {
+                'note_event_output': tf.one_hot(evt[0], depth=2),
+                'pitch_output': tf.one_hot(evt[1], depth=FIXED_PITCH_RANGE),
+                'velocity_output': tf.one_hot(evt[2], depth=FIXED_VELOCITY_RANGE),
+                'time_delta_output': tf.one_hot(evt[3], depth=FIXED_TIME_DELTA_RANGE),
+            },
+        )
+    )
 
-        model.compile(optimizer='adam',
-                      loss={'note_event_output': 'categorical_crossentropy',
-                            'pitch_output': 'categorical_crossentropy',
-                            'velocity_output': 'categorical_crossentropy',
-                            'time_delta_output': 'categorical_crossentropy'},
-                      metrics={'note_event_output': 'accuracy',
-                               'pitch_output': 'accuracy',
-                               'velocity_output': 'accuracy',
-                               'time_delta_output': 'accuracy'})
-
-    # Train the model
-    model.fit(X, {'note_event_output': y_note_event, 'pitch_output': y_pitch, 'velocity_output': y_velocity, 'time_delta_output': y_time_delta},
-              batch_size=batch_size, epochs=epochs, validation_split=validation_split, callbacks=[early_stopping])
-
-    print(f"Completed processing {npz_file.name}")
-
-    # Log the processed file
-    with open(log_file_path, 'a') as log_file:
-        log_file.write(f"{npz_file.name}\n")
-
-    return model
+    return dataset.cache(), sample_shape, total_samples
 
 
 # Read the existing training log
@@ -142,25 +114,71 @@ def read_training_log(log_file_path):
 
 processed_files = read_training_log(log_file_path)
 
-# Initialize model to None, it will be created or loaded if exists
+npz_files = [f for f in sorted(data_processed_dir.glob('*.npz')) if f.name not in processed_files]
+
+if not npz_files:
+    raise ValueError(f"No new .npz files found in {data_processed_dir}")
+
+dataset, sample_shape, total_samples = build_dataset(npz_files)
+
+val_size = int(total_samples * validation_split)
+val_dataset = dataset.take(val_size).batch(batch_size).prefetch(tf.data.AUTOTUNE)
+train_dataset = dataset.skip(val_size).batch(batch_size).prefetch(tf.data.AUTOTUNE)
+
+sequence_length, num_features = sample_shape
+
 model = None
 model_path = output_models_dir / "latest_model.h5"
-
-# Check if a previously trained model exists and load it
 if model_path.exists():
     print(f"Loading model from {model_path}")
     model = load_model(model_path)
 
-# Process each .npz file in the processed data directory
-for npz_file in sorted(data_processed_dir.glob('*.npz')):
-    if npz_file.name in processed_files:
-        print(f"Skipping already processed file: {npz_file.name}")
-        continue
+if model is None:
+    print("Initializing new model.")
+    if args.model_type == "transformer":
+        model = build_transformer_model(
+            (sequence_length, num_features),
+            pitch_range=FIXED_PITCH_RANGE,
+            velocity_range=FIXED_VELOCITY_RANGE,
+            time_delta_range=FIXED_TIME_DELTA_RANGE,
+        )
+    else:
+        model = build_multi_output_rnn_model(
+            (sequence_length, num_features),
+            num_units=num_units,
+            dropout_rate=dropout_rate,
+            pitch_range=FIXED_PITCH_RANGE,
+            velocity_range=FIXED_VELOCITY_RANGE,
+            time_delta_range=FIXED_TIME_DELTA_RANGE,
+        )
 
-    # Process and train the model with the current .npz file
-    model = process_and_train(npz_file, model)
+    model.compile(
+        optimizer="adam",
+        loss={
+            "note_event_output": "categorical_crossentropy",
+            "pitch_output": "categorical_crossentropy",
+            "velocity_output": "categorical_crossentropy",
+            "time_delta_output": "categorical_crossentropy",
+        },
+        metrics={
+            "note_event_output": "accuracy",
+            "pitch_output": "accuracy",
+            "velocity_output": "accuracy",
+            "time_delta_output": "accuracy",
+        },
+    )
 
-    # Save the latest model after each file is processed to facilitate resuming training
-    latest_model_save_path = output_models_dir / "latest_model.h5"
-    model.save(latest_model_save_path)
-    print(f"Latest model saved to {latest_model_save_path}")
+model.fit(
+    train_dataset,
+    validation_data=val_dataset,
+    epochs=epochs,
+    callbacks=[early_stopping],
+)
+
+model.save(model_path)
+print(f"Model saved to {model_path}")
+
+# Update training log with processed files
+with open(log_file_path, "a") as log_file:
+    for f in npz_files:
+        log_file.write(f"{f.name}\n")
